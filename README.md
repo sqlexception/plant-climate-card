@@ -135,6 +135,9 @@ Node-RED-/Plant-Zustände sind dort entfernt.
   `Gesperrt`.
 - Die Sollwertbedienung verwendet Pointer Events und funktioniert damit mit
   Maus, Touch und Stift.
+- Die Reglerposition verwendet unabhängig vom Betriebsmodus immer dieselbe feste
+  visuelle Skala von 18 bis 30 °C. Heiz- und Kühlgrenzen begrenzen nur den
+  auswählbaren Sollwert, nicht die Position der Temperaturskala.
 
 ## Optionale Zustands-Entities
 

@@ -2,6 +2,9 @@ import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import type { HVACMode, TemperatureRange } from "./types";
 
+const VISUAL_MIN_TEMPERATURE = 18;
+const VISUAL_MAX_TEMPERATURE = 30;
+
 @customElement("plant-temperature-dial")
 export class PlantTemperatureDial extends LitElement {
   @property({ type: String }) name = "";
@@ -13,7 +16,7 @@ export class PlantTemperatureDial extends LitElement {
   @property({ type: String }) statusLabel = "Aus";
   @property({ type: String }) statusIcon = "mdi:power-standby";
   @property({ attribute: false }) range: TemperatureRange = {
-    min: 16,
+    min: 18,
     max: 30,
     step: 1,
     effectiveMode: "off"
@@ -184,9 +187,9 @@ export class PlantTemperatureDial extends LitElement {
 
     const arcPosition = angle >= 150 ? angle - 150 : 210 + angle;
     const ratio = Math.min(1, Math.max(0, arcPosition / 255));
-    const displayRange = this.displayRange();
+    const visualRange = this.visualRange();
     const value =
-      displayRange.min + ratio * (displayRange.max - displayRange.min);
+      visualRange.min + ratio * (visualRange.max - visualRange.min);
     this.selectedTemperature = this.clampDisplayTemperature(value);
   }
 
@@ -207,15 +210,29 @@ export class PlantTemperatureDial extends LitElement {
     );
   }
 
+  private visualRange(): { min: number; max: number } {
+    return {
+      min: VISUAL_MIN_TEMPERATURE,
+      max: VISUAL_MAX_TEMPERATURE
+    };
+  }
+
   private displayRange(): { min: number; max: number } {
-    const min = Math.ceil(this.range.min);
-    const max = Math.floor(this.range.max);
+    const visualRange = this.visualRange();
+    const min = Math.max(visualRange.min, Math.ceil(this.range.min));
+    const max = Math.min(visualRange.max, Math.floor(this.range.max));
 
     if (min <= max) {
       return { min, max };
     }
 
-    const fallback = Math.round((this.range.min + this.range.max) / 2);
+    const fallback = Math.min(
+      visualRange.max,
+      Math.max(
+        visualRange.min,
+        Math.round((this.range.min + this.range.max) / 2)
+      )
+    );
     return { min: fallback, max: fallback };
   }
 
@@ -232,11 +249,13 @@ export class PlantTemperatureDial extends LitElement {
   }
 
   private temperatureToAngle(temperature: number): number {
-    const range = this.displayRange();
-    if (range.max <= range.min) return 150;
+    const range = this.visualRange();
+    const visualTemperature = Math.min(
+      range.max,
+      Math.max(range.min, Math.round(temperature))
+    );
     const ratio =
-      (this.clampDisplayTemperature(temperature) - range.min) /
-      (range.max - range.min);
+      (visualTemperature - range.min) / (range.max - range.min);
     return 150 + ratio * 255;
   }
 
