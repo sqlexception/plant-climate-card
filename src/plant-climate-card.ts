@@ -10,6 +10,7 @@ import {
   allowedTemperatureRange,
   boolEntityIsOn,
   clampTemperature,
+  demandModeDisplay,
   fanIcon,
   finiteNumber,
   inferRoomEnableEntity,
@@ -23,7 +24,7 @@ import type {
   TemperatureRange
 } from "./types";
 
-const VERSION = "1.4.0";
+const VERSION = "1.6.0";
 
 const formLabels: Record<string, string> = {
   entity: "Climate-Entity",
@@ -31,7 +32,6 @@ const formLabels: Record<string, string> = {
   global_enable_entity: "Globale Klimafreigabe",
   room_enable_entity: "Raumfreigabe",
   outside_temperature_entity: "Außentemperatur",
-  humidity_entity: "Luftfeuchtigkeit",
   plant_mode_entity: "Plant-Betriebsart",
   controller_state_entity: "Reglerzustand",
   blocking_reason_entity: "Sperrgrund",
@@ -91,10 +91,6 @@ export class PlantClimateCard extends LitElement {
             },
             {
               name: "outside_temperature_entity",
-              selector: { entity: { domain: "sensor" } }
-            },
-            {
-              name: "humidity_entity",
               selector: { entity: { domain: "sensor" } }
             }
           ]
@@ -263,9 +259,6 @@ export class PlantClimateCard extends LitElement {
     const currentTemperature = finiteNumber(climate.attributes.current_temperature);
     const actualTarget = finiteNumber(climate.attributes.temperature);
     const targetTemperature = this.pendingTemperature ?? actualTarget;
-    const humidity =
-      numericEntityState(this.entity(this.config.humidity_entity)) ??
-      finiteNumber(climate.attributes.current_humidity);
     const outsideTemperature = numericEntityState(
       this.entity(this.config.outside_temperature_entity)
     );
@@ -342,7 +335,7 @@ export class PlantClimateCard extends LitElement {
             .name=${name}
             .currentTemperature=${currentTemperature}
             .targetTemperature=${targetTemperature}
-            .humidity=${humidity}
+            .outsideTemperature=${outsideTemperature}
             .mode=${visualMode}
             .action=${action}
             .statusLabel=${dialState.label}
@@ -432,8 +425,8 @@ export class PlantClimateCard extends LitElement {
     ) {
       return { label: "Gesperrt", icon: "mdi:lock-clock" };
     }
-    if (data.mode === "heat") return { label: "Heizen", icon: "mdi:fire" };
-    if (data.mode === "cool") return { label: "Kühlen", icon: "mdi:snowflake" };
+    const demandDisplay = demandModeDisplay(data.mode, data.action);
+    if (demandDisplay) return demandDisplay;
     if (data.mode === "dry") {
       return { label: "Entfeuchten", icon: "mdi:water-percent" };
     }

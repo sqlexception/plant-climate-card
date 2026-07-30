@@ -8,7 +8,7 @@ export class PlantTemperatureDial extends LitElement {
   @property({ type: String }) name = "";
   @property({ type: Number }) currentTemperature?: number;
   @property({ type: Number }) targetTemperature?: number;
-  @property({ type: Number }) humidity?: number;
+  @property({ type: Number }) outsideTemperature?: number;
   @property({ type: String }) mode: HVACMode = "off";
   @property({ type: String }) action = "off";
   @property({ type: String }) statusLabel = "Aus";
@@ -87,11 +87,10 @@ export class PlantTemperatureDial extends LitElement {
             <span>${this.statusLabel}</span>
           </div>
 
-          <div class="humidity">
-            ${this.humidity === undefined
+          <div class="outside-temperature">
+            ${this.outsideTemperature === undefined
               ? nothing
-              : html`<ha-icon icon="mdi:water-percent"></ha-icon
-                  ><span>${Math.round(this.humidity)} %</span>`}
+              : html`<span>${this.formatTemperature(this.outsideTemperature)} °C</span>`}
           </div>
 
           <div
@@ -328,7 +327,7 @@ export class PlantTemperatureDial extends LitElement {
     .name,
     .current,
     .status,
-    .humidity {
+    .outside-temperature {
       position: absolute;
       left: 0;
       right: 0;
@@ -408,20 +407,13 @@ export class PlantTemperatureDial extends LitElement {
       opacity: 0.52;
     }
 
-    .humidity {
+    .outside-temperature {
       bottom: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 2px;
       color: rgb(202 202 202 / 62%);
       font-size: 12px;
-    }
-
-    .humidity ha-icon {
-      width: 14px;
-      height: 14px;
-      --mdc-icon-size: 14px;
     }
 
     .touch-layer {

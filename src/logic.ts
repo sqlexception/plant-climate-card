@@ -243,6 +243,27 @@ export function actionIcon(action: string, mode: string): string {
   return icons[action] ?? modeIcon(mode);
 }
 
+export function demandModeDisplay(
+  mode: string,
+  action: string
+): { label: string; icon: string } | undefined {
+  if (mode === "heat") {
+    return {
+      label: action === "heating" ? "Heizen" : "Lüften",
+      icon: "mdi:fire"
+    };
+  }
+
+  if (mode === "cool") {
+    return {
+      label: action === "cooling" ? "Kühlen" : "Lüften",
+      icon: "mdi:snowflake"
+    };
+  }
+
+  return undefined;
+}
+
 export function fanIcon(mode: string): string {
   const icons: Record<string, string> = {
     auto: "mdi:fan-auto",

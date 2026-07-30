@@ -65,7 +65,7 @@ Regelinstanz neben Node-RED erzeugen.
 2. In Home Assistant unter **Einstellungen → Dashboards → Ressourcen** ergänzen:
 
    ```text
-   /local/plant-climate-card/plant-climate-card.js?v=1.4.0
+   /local/plant-climate-card/plant-climate-card.js?v=1.6.0
    ```
 
    Ressourcentyp: **JavaScript-Modul**
@@ -111,10 +111,17 @@ outside_temperature_entity: sensor.eg_kuechenbereich_klimaanlage_aussentemperatu
 - Bei einer konfigurierten Störung, einem offenen Fenster oder einem laufenden
   Plant-Moduswechsel sind Sollwert und Lüfter ebenfalls gesperrt.
 - Der Raumname wird im Kreis hell und gut lesbar angezeigt.
+- Unter dem Betriebsstatus zeigt die Karte ausschließlich den Messwert der
+  konfigurierten Außentemperatur mit Einheit, ohne Textlabel.
 - Da die Bosch-Climate-Entity kein `hvac_action` liefert, berechnet die Karte
   den Bedarf aus Ist- und Solltemperatur. Im Kühlbetrieb pulsiert der Ring bei
   `Soll < Ist`, im Heizbetrieb bei `Ist < Soll`.
-- Bei erreichtem Sollwert oder einer Sperre bleibt der Leuchtring ruhig.
+- Während der Ring pulsiert, steht im Kreis `Kühlen` beziehungsweise `Heizen`.
+  Ohne Temperaturbedarf bleibt der Leuchtring ruhig und die Anzeige wechselt
+  auf `Lüften`. Schneeflocke beziehungsweise Flamme zeigen weiterhin den
+  gewählten Grundmodus.
+- Bei einer Sperre bleibt der Leuchtring ruhig und die Anzeige zeigt
+  `Gesperrt`.
 - Die Sollwertbedienung verwendet Pointer Events und funktioniert damit mit
   Maus, Touch und Stift.
 

@@ -36,7 +36,6 @@ export interface PlantClimateCardConfig {
   global_enable_entity?: string;
   room_enable_entity?: string;
   outside_temperature_entity?: string;
-  humidity_entity?: string;
 
   plant_mode_entity?: string;
   controller_state_entity?: string;

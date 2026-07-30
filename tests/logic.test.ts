@@ -4,6 +4,7 @@ import {
   automaticTarget,
   clampTemperature,
   coolingManualMinimum,
+  demandModeDisplay,
   inferRoomEnableEntity,
   temperatureDemandAction
 } from "../src/logic";
@@ -183,5 +184,27 @@ describe("Plant-Klimagrenzen", () => {
         targetTemperature: 21
       })
     ).toBe("heating");
+  });
+
+  it("zeigt Kühlen nur während des berechneten Kühlbedarfs", () => {
+    expect(demandModeDisplay("cool", "cooling")).toEqual({
+      label: "Kühlen",
+      icon: "mdi:snowflake"
+    });
+    expect(demandModeDisplay("cool", "idle")).toEqual({
+      label: "Lüften",
+      icon: "mdi:snowflake"
+    });
+  });
+
+  it("zeigt Heizen nur während des berechneten Heizbedarfs", () => {
+    expect(demandModeDisplay("heat", "heating")).toEqual({
+      label: "Heizen",
+      icon: "mdi:fire"
+    });
+    expect(demandModeDisplay("heat", "idle")).toEqual({
+      label: "Lüften",
+      icon: "mdi:fire"
+    });
   });
 });
