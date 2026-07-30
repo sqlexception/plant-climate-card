@@ -33,127 +33,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Apply requested UI tweaks
-        run: |
-          python3 <<'PY'
-          from pathlib import Path
-
-          def replace_once(text: str, old: str, new: str, label: str) -> str:
-              if old in text:
-                  return text.replace(old, new, 1)
-              if new in text:
-                  return text
-              raise SystemExit(f"Pattern not found: {label}")
-
-          card_path = Path("src/plant-climate-card.ts")
-          card = card_path.read_text()
-          card = card.replace('  global_enable_entity: "Globale Klimafreigabe",\n', '', 1)
-          card = card.replace(
-              '''            {
-              name: "global_enable_entity",
-              selector: { entity: { domain: "input_boolean" } }
-            },
-''',
-              '',
-              1,
-          )
-          card_path.write_text(card)
-
-          dial_path = Path("src/plant-temperature-dial.ts")
-          dial = dial_path.read_text()
-
-          dial = dial.replace('import { clampTemperature, roundToStep } from "./logic";\n', '', 1)
-          dial = replace_once(
-              dial,
-              ': clampTemperature(this.targetTemperature, this.range);',
-              ': this.clampDisplayTemperature(this.targetTemperature);',
-              'snap incoming target to integer',
-          )
-          dial = replace_once(
-              dial,
-              '    const target = this.selectedTemperature ?? this.targetTemperature;\n    const pointerAngle =',
-              '    const target = this.selectedTemperature ?? this.targetTemperature;\n    const displayRange = this.displayRange();\n    const pointerAngle =',
-              'display range in render',
-          )
-          dial = replace_once(
-              dial,
-              '          aria-valuemin=${this.range.min}\n          aria-valuemax=${this.range.max}',
-              '          aria-valuemin=${displayRange.min}\n          aria-valuemax=${displayRange.max}',
-              'integer aria range',
-          )
-          dial = replace_once(dial, '      delta = this.range.step;', '      delta = 1;', 'keyboard +1')
-          dial = replace_once(dial, '      delta = -this.range.step;', '      delta = -1;', 'keyboard -1')
-          dial = replace_once(
-              dial,
-              '''    const current = this.selectedTemperature ?? this.targetTemperature ?? this.range.min;
-    this.selectedTemperature = clampTemperature(current + delta, this.range);''',
-              '''    const current = this.clampDisplayTemperature(
-      this.selectedTemperature ?? this.targetTemperature ?? this.displayRange().min
-    );
-    this.selectedTemperature = this.clampDisplayTemperature(current + delta);''',
-              'integer keyboard selection',
-          )
-          dial = replace_once(
-              dial,
-              '''    const value = this.range.min + ratio * (this.range.max - this.range.min);
-    this.selectedTemperature = clampTemperature(
-      roundToStep(value, this.range.step, this.range.min),
-      this.range
-    );''',
-              '''    const displayRange = this.displayRange();
-    const value =
-      displayRange.min + ratio * (displayRange.max - displayRange.min);
-    this.selectedTemperature = this.clampDisplayTemperature(value);''',
-              'integer pointer selection',
-          )
-          dial = replace_once(
-              dial,
-              '''  private temperatureToAngle(temperature: number): number {
-    if (this.range.max <= this.range.min) return 150;
-    const ratio =
-      (clampTemperature(temperature, this.range) - this.range.min) /
-      (this.range.max - this.range.min);
-    return 150 + ratio * 255;
-  }
-
-  private formatTemperature(value: number): string {
-    return Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1);
-  }''',
-              '''  private displayRange(): { min: number; max: number } {
-    const min = Math.ceil(this.range.min);
-    const max = Math.floor(this.range.max);
-
-    if (min <= max) {
-      return { min, max };
-    }
-
-    const fallback = Math.round((this.range.min + this.range.max) / 2);
-    return { min: fallback, max: fallback };
-  }
-
-  private clampDisplayTemperature(value: number): number {
-    const range = this.displayRange();
-    return Math.min(range.max, Math.max(range.min, Math.round(value)));
-  }
-
-  private temperatureToAngle(temperature: number): number {
-    const range = this.displayRange();
-    if (range.max <= range.min) return 150;
-    const ratio =
-      (this.clampDisplayTemperature(temperature) - range.min) /
-      (range.max - range.min);
-    return 150 + ratio * 255;
-  }
-
-  private formatTemperature(value: number): string {
-    return Math.round(value).toFixed(0);
-  }''',
-              'integer display helpers',
-          )
-
-          dial_path.write_text(dial)
-          PY
-
       - name: Type check
         run: npm run check
 
@@ -163,15 +42,15 @@ jobs:
       - name: Build bundle
         run: npm run build
 
-      - name: Commit source and generated bundle
+      - name: Commit generated bundle
         run: |
-          git add src/plant-climate-card.ts src/plant-temperature-dial.ts plant-climate-card.js plant-climate-card.js.map
+          git add plant-climate-card.js plant-climate-card.js.map
           if git diff --cached --quiet; then
-            echo "Source and bundle are already up to date."
+            echo "Bundle is already up to date."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "UI: integer temperatures and simplify settings"
+          git commit -m "build: update generated frontend bundle"
           git push
