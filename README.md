@@ -31,13 +31,12 @@ climate.<raum>_klimaanlage_inneneinheit
 
 ## Integrierte Grenzen
 
-- Heiz-Startwert in Node-RED: 21 °C
-- manuelles Heizen: maximal 23 °C
-- automatischer Kühl-Startwert in Node-RED:
+- Heiz-Startwert: 21 °C
+- manuelles Heizen: maximal 22 °C
+- automatischer Kühl-Startwert:
   `max(25 °C, Außentemperatur - 8 K)`
-- manuelles Kühlen über die Karte: mindestens 25 °C, unabhängig von der
-  Außentemperatur
-- Sollwert-Schrittweite: 0,5 K
+- manuelles Kühlen über die Karte: mindestens 23 °C
+- Sollwert-Schrittweite: 1 K
 
 Die Karte begrenzt die Eingabe bereits in der Oberfläche. Node-RED muss dieselben
 Grenzen weiterhin verbindlich prüfen.
@@ -92,10 +91,13 @@ Regelinstanz neben Node-RED erzeugen.
 type: custom:plant-climate-card
 entity: climate.eg_kuechenbereich_klimaanlage_inneneinheit
 name: EG Küchenbereich
-global_enable_entity: input_boolean.haus_klimaregelung_01_freigabe
 room_enable_entity: input_boolean.eg_kuechenbereich_klimaanlage_01_freigabe
 outside_temperature_entity: sensor.eg_kuechenbereich_klimaanlage_aussentemperatur
 ```
+
+Im grafischen Karteneditor werden bewusst nur die für die normale Bedienung
+benötigten Felder angezeigt. Die frühere globale Klimafreigabe und die
+Node-RED-/Plant-Zustände sind dort entfernt.
 
 ## Verhalten
 
@@ -106,20 +108,22 @@ outside_temperature_entity: sensor.eg_kuechenbereich_klimaanlage_aussentemperatu
   Home-Assistant-Menü zur Verfügung.
 - Die Raumfreigabe wird automatisch aus dem Entity-Namen erkannt. Eine
   ausdrücklich konfigurierte `room_enable_entity` hat Vorrang.
-- Bei ausgeschalteter Raum- oder Hausfreigabe steht im Kreis `Gesperrt`. Die
+- Bei ausgeschalteter Raumfreigabe steht im Kreis `Gesperrt`. Die
   Lüfterbedienung bleibt gesperrt, der Sollwert kann aber weiterhin für den
   nächsten Start eingestellt werden.
 - Auch wenn die Climate-Entity selbst auf `off` steht, bleibt der
-  Sollwertregler bedienbar. Ist `plant_mode_entity` konfiguriert, gelten dabei
-  weiterhin die passenden Heiz- beziehungsweise Kühlgrenzen.
-- Bei einer konfigurierten Störung, einem offenen Fenster oder einem laufenden
-  Plant-Moduswechsel bleibt die Anlage gesperrt. Der Sollwert kann weiterhin
-  vorbereitet werden, die Lüfterbedienung bleibt gesperrt.
+  Sollwertregler bedienbar. Ist `plant_mode_entity` per YAML konfiguriert,
+  gelten dabei weiterhin die passenden Heiz- beziehungsweise Kühlgrenzen.
 - Nur wenn die Climate-Entity `unknown` oder `unavailable` ist, wird auch die
   Sollwertbedienung deaktiviert.
 - Der Raumname wird im Kreis hell und gut lesbar angezeigt.
 - Unter dem Betriebsstatus zeigt die Karte ausschließlich den Messwert der
   konfigurierten Außentemperatur mit Einheit, ohne Textlabel.
+- Isttemperatur, Außentemperatur und Sollwert werden in der Karte als ganze
+  Zahlen dargestellt.
+- Der Sollwertregler arbeitet standardmäßig in 1-K-Schritten.
+- Die Zahl am roten Sollwertpunkt wird nur während des Ziehens angezeigt und
+  verschwindet nach dem Loslassen wieder.
 - Da die Bosch-Climate-Entity kein `hvac_action` liefert, berechnet die Karte
   den Bedarf aus Ist- und Solltemperatur. Im Kühlbetrieb pulsiert der Ring bei
   `Soll < Ist`, im Heizbetrieb bei `Ist < Soll`.
@@ -134,10 +138,11 @@ outside_temperature_entity: sensor.eg_kuechenbereich_klimaanlage_aussentemperatu
 
 ## Optionale Zustands-Entities
 
-Die Karte funktioniert ohne diese Angaben. Sobald Node-RED die Entities liefert,
-können sie im grafischen Karteneditor zugeordnet werden:
+Die folgenden Felder werden im grafischen Karteneditor nicht mehr angezeigt.
+Bestehende YAML-Konfigurationen bleiben aus Kompatibilitätsgründen unterstützt:
 
 ```yaml
+global_enable_entity: input_boolean.haus_klimaregelung_01_freigabe
 plant_mode_entity: sensor.aussen_garten_klimaaussengeraet_01_betriebsart
 controller_state_entity: sensor.aussen_garten_klimaaussengeraet_01_reglerzustand
 blocking_reason_entity: sensor.aussen_garten_klimaaussengeraet_01_sperrgrund
@@ -145,8 +150,6 @@ fault_entity: binary_sensor.aussen_garten_klimaaussengeraet_01_stoerung
 defrost_entity: binary_sensor.aussen_garten_klimaaussengeraet_01_abtauung
 window_entity: binary_sensor.eg_kuechenbereich_fenster_01_offen
 ```
-
-Nicht vorhandene optionale Entities werden nicht eingetragen.
 
 ## Lizenz und Herkunft
 
