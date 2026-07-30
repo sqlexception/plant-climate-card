@@ -241,17 +241,17 @@ export class PlantTemperatureDial extends LitElement {
     }
 
     .bezel {
-      width: 200px;
-      height: 200px;
+      width: 208px;
+      height: 208px;
       background: rgb(19 19 19);
       box-shadow:
         inset 0 1px 1px rgb(255 255 255 / 2%),
-        0 3px 10px rgb(0 0 0 / 38%);
+        0 3px 12px rgb(0 0 0 / 42%);
     }
 
     .glow {
-      width: 184px;
-      height: 184px;
+      width: 190px;
+      height: 190px;
       background: rgba(100, 100, 100, 0.12);
       box-shadow: rgb(0 0 0 / 45%) 0 4px 14px -2px;
       will-change: filter, opacity, box-shadow;
@@ -291,11 +291,11 @@ export class PlantTemperatureDial extends LitElement {
     }
 
     .screen.heat.heating .glow {
-      animation: heating 3s ease-in-out infinite;
+      animation: heating 3s ease-in infinite;
     }
 
     .screen.cool.cooling .glow {
-      animation: cooling 3s ease-in-out infinite;
+      animation: cooling 3s ease-in infinite;
     }
 
     .handle {
@@ -383,7 +383,7 @@ export class PlantTemperatureDial extends LitElement {
 
     .status ha-icon {
       position: relative;
-      top: -2px;
+      top: -4px;
       flex: 0 0 18px;
       width: 18px;
       height: 18px;
@@ -490,36 +490,36 @@ export class PlantTemperatureDial extends LitElement {
     @keyframes heating {
       0%,
       100% {
-        filter: brightness(1.22);
+        filter: brightness(1.18);
         opacity: 1;
         box-shadow:
-          rgb(255 177 0 / 72%) 0 5px 17px -2px,
-          rgb(255 143 7 / 34%) 0 0 12px 0;
+          rgb(255 177 0 / 95%) 0 5px 18px -2px,
+          rgb(255 143 7 / 46%) 0 0 14px 0;
       }
       60% {
-        filter: brightness(0.84);
-        opacity: 0.62;
+        filter: brightness(0.88);
+        opacity: 0.32;
         box-shadow:
-          rgb(255 177 0 / 24%) 0 4px 14px -2px,
-          rgb(255 143 7 / 12%) 0 0 8px 0;
+          rgb(255 177 0 / 30%) 0 4px 14px -2px,
+          rgb(255 143 7 / 14%) 0 0 8px 0;
       }
     }
 
     @keyframes cooling {
       0%,
       100% {
-        filter: brightness(1.2);
+        filter: brightness(1.18);
         opacity: 1;
         box-shadow:
-          rgb(0 161 255 / 76%) 0 5px 17px -2px,
-          rgb(7 186 255 / 36%) 0 0 12px 0;
+          rgb(0 161 255 / 100%) 0 5px 18px -2px,
+          rgb(7 186 255 / 48%) 0 0 14px 0;
       }
       60% {
-        filter: brightness(0.84);
-        opacity: 0.62;
+        filter: brightness(0.88);
+        opacity: 0.32;
         box-shadow:
-          rgb(0 161 255 / 24%) 0 4px 14px -2px,
-          rgb(7 186 255 / 12%) 0 0 8px 0;
+          rgb(0 161 255 / 30%) 0 4px 14px -2px,
+          rgb(7 186 255 / 14%) 0 0 8px 0;
       }
     }
 

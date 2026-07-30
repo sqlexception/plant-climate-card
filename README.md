@@ -63,7 +63,7 @@ Regelinstanz neben Node-RED erzeugen.
 2. In Home Assistant unter **Einstellungen → Dashboards → Ressourcen** ergänzen:
 
    ```text
-   /local/plant-climate-card/plant-climate-card.js?v=1.1.0
+   /local/plant-climate-card/plant-climate-card.js?v=1.2.0
    ```
 
    Ressourcentyp: **JavaScript-Modul**
@@ -106,6 +106,8 @@ outside_temperature_entity: sensor.eg_kuechenbereich_klimaanlage_aussentemperatu
   Plant-Moduswechsel sind Sollwert und Lüfter ebenfalls gesperrt.
 - `hvac_action: idle` schaltet nichts aus. Der Kreis bleibt in der vorhandenen
   Betriebsart und zeigt weiterhin Heizen oder Kühlen.
+- Der vergrößerte Leuchtring pulsiert bei `hvac_action: heating` beziehungsweise
+  `hvac_action: cooling` im gleichen Drei-Sekunden-Rhythmus wie die Vorlage.
 - Die Sollwertbedienung verwendet Pointer Events und funktioniert damit mit
   Maus, Touch und Stift.
 
