@@ -29,15 +29,8 @@ const VERSION = "1.6.0";
 const formLabels: Record<string, string> = {
   entity: "Climate-Entity",
   name: "Anzeigename",
-  global_enable_entity: "Globale Klimafreigabe",
   room_enable_entity: "Raumfreigabe",
   outside_temperature_entity: "Außentemperatur",
-  plant_mode_entity: "Plant-Betriebsart",
-  controller_state_entity: "Reglerzustand",
-  blocking_reason_entity: "Sperrgrund",
-  fault_entity: "Störung",
-  defrost_entity: "Abtauung",
-  window_entity: "Fenster oder Tür offen",
   heat_default: "Heiz-Startwert",
   heat_manual_max: "Heizen manuell maximal",
   cool_auto_default: "Kühl-Startwert mindestens",
@@ -82,48 +75,12 @@ export class PlantClimateCard extends LitElement {
           schema: [
             { name: "name", selector: { text: {} } },
             {
-              name: "global_enable_entity",
-              selector: { entity: { domain: "input_boolean" } }
-            },
-            {
               name: "room_enable_entity",
               selector: { entity: { domain: "input_boolean" } }
             },
             {
               name: "outside_temperature_entity",
               selector: { entity: { domain: "sensor" } }
-            }
-          ]
-        },
-        {
-          type: "expandable",
-          title: "Node-RED- und Plant-Zustände",
-          name: "",
-          flatten: true,
-          schema: [
-            {
-              name: "plant_mode_entity",
-              selector: { entity: { domain: "sensor" } }
-            },
-            {
-              name: "controller_state_entity",
-              selector: { entity: { domain: "sensor" } }
-            },
-            {
-              name: "blocking_reason_entity",
-              selector: { entity: { domain: "sensor" } }
-            },
-            {
-              name: "fault_entity",
-              selector: { entity: { domain: "binary_sensor" } }
-            },
-            {
-              name: "defrost_entity",
-              selector: { entity: { domain: "binary_sensor" } }
-            },
-            {
-              name: "window_entity",
-              selector: { entity: { domain: "binary_sensor" } }
             }
           ]
         },
@@ -140,27 +97,27 @@ export class PlantClimateCard extends LitElement {
               schema: [
                 {
                   name: "heat_default",
-                  selector: { number: { min: 16, max: 23, step: 0.5, mode: "box" } }
+                  selector: { number: { min: 16, max: 23, step: 1, mode: "box" } }
                 },
                 {
                   name: "heat_manual_max",
-                  selector: { number: { min: 16, max: 30, step: 0.5, mode: "box" } }
+                  selector: { number: { min: 16, max: 30, step: 1, mode: "box" } }
                 },
                 {
                   name: "cool_auto_default",
-                  selector: { number: { min: 18, max: 30, step: 0.5, mode: "box" } }
+                  selector: { number: { min: 18, max: 30, step: 1, mode: "box" } }
                 },
                 {
                   name: "cool_manual_min",
-                  selector: { number: { min: 25, max: 30, step: 0.5, mode: "box" } }
+                  selector: { number: { min: 23, max: 30, step: 1, mode: "box" } }
                 },
                 {
                   name: "cool_outdoor_delta",
-                  selector: { number: { min: 1, max: 15, step: 0.5, mode: "box" } }
+                  selector: { number: { min: 1, max: 15, step: 1, mode: "box" } }
                 },
                 {
                   name: "temperature_step",
-                  selector: { number: { min: 0.1, max: 1, step: 0.1, mode: "box" } }
+                  selector: { number: { min: 1, max: 2, step: 1, mode: "box" } }
                 }
               ]
             }
@@ -184,9 +141,6 @@ export class PlantClimateCard extends LitElement {
         if (schema.name === "room_enable_entity") {
           return "Diese Freigabe ist der Ein-/Aus-Schalter der Card.";
         }
-        if (schema.name === "plant_mode_entity") {
-          return "Wird nur angezeigt. Die Betriebsart wird nicht von der Card geändert.";
-        }
         return undefined;
       },
       assertConfig: (config: Partial<PlantClimateCardConfig>) => {
@@ -207,11 +161,11 @@ export class PlantClimateCard extends LitElement {
 
     this.config = {
       heat_default: 21,
-      heat_manual_max: 23,
+      heat_manual_max: 22,
       cool_auto_default: 25,
-      cool_manual_min: 25,
+      cool_manual_min: 23,
       cool_outdoor_delta: 8,
-      temperature_step: 0.5,
+      temperature_step: 1,
       show_fan: true,
       ...config
     };
