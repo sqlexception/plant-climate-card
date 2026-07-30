@@ -35,13 +35,13 @@ describe("Plant-Klimagrenzen", () => {
     expect(automaticTarget("cool", 38, config)).toBe(30);
   });
 
-  it("begrenzt manuelles Kühlen unabhängig von außen auf mindestens 25 °C", () => {
-    expect(coolingManualMinimum()).toBe(25);
-    expect(coolingManualMinimum(23)).toBe(25);
+  it("begrenzt manuelles Kühlen standardmäßig auf mindestens 22 °C", () => {
+    expect(coolingManualMinimum()).toBe(22);
+    expect(coolingManualMinimum(20)).toBe(22);
     expect(coolingManualMinimum(26)).toBe(26);
   });
 
-  it("korrigiert einen unzulässigen Kühlwunsch von 17 °C auf 25 °C", () => {
+  it("korrigiert einen unzulässigen Kühlwunsch von 17 °C auf 22 °C", () => {
     const range = allowedTemperatureRange({
       mode: "cool",
       entityMin: 16,
@@ -49,31 +49,31 @@ describe("Plant-Klimagrenzen", () => {
       outsideTemperature: 32,
       config
     });
-    expect(range).toMatchObject({ min: 25, max: 30, effectiveMode: "cool" });
-    expect(clampTemperature(17, range)).toBe(25);
+    expect(range).toMatchObject({ min: 22, max: 30, effectiveMode: "cool" });
+    expect(clampTemperature(17, range)).toBe(22);
   });
 
-  it("übernimmt alte Karten mit cool_manual_min 23 sicher als 25 °C", () => {
+  it("übernimmt höhere konfigurierte Kühl-Minima", () => {
     const range = allowedTemperatureRange({
       mode: "cool",
       entityMin: 16,
       entityMax: 30,
       outsideTemperature: 32,
-      config: { ...config, cool_manual_min: 23 }
+      config: { ...config, cool_manual_min: 25 }
     });
     expect(range.min).toBe(25);
     expect(clampTemperature(17, range)).toBe(25);
   });
 
-  it("begrenzt manuelles Heizen auf 23 °C", () => {
+  it("begrenzt manuelles Heizen standardmäßig auf 22 °C", () => {
     const range = allowedTemperatureRange({
       mode: "heat",
       entityMin: 16,
       entityMax: 30,
       config
     });
-    expect(range).toMatchObject({ min: 16, max: 23, effectiveMode: "heat" });
-    expect(clampTemperature(25, range)).toBe(23);
+    expect(range).toMatchObject({ min: 16, max: 22, effectiveMode: "heat" });
+    expect(clampTemperature(25, range)).toBe(22);
   });
 
   it("wendet für die manuelle Bedienung die wirksame Plant-Betriebsart an", () => {
@@ -85,7 +85,7 @@ describe("Plant-Klimagrenzen", () => {
       outsideTemperature: 35,
       config
     });
-    expect(range).toMatchObject({ min: 25, max: 30, effectiveMode: "cool" });
+    expect(range).toMatchObject({ min: 22, max: 30, effectiveMode: "cool" });
   });
 
   it("rundet Sollwerte in 0,5-K-Schritten", () => {
