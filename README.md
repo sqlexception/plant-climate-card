@@ -106,10 +106,17 @@ outside_temperature_entity: sensor.eg_kuechenbereich_klimaanlage_aussentemperatu
   Home-Assistant-Menü zur Verfügung.
 - Die Raumfreigabe wird automatisch aus dem Entity-Namen erkannt. Eine
   ausdrücklich konfigurierte `room_enable_entity` hat Vorrang.
-- Bei ausgeschalteter Raum- oder Hausfreigabe steht im Kreis `Gesperrt`;
-  Sollwert und Lüfter sind gesperrt.
+- Bei ausgeschalteter Raum- oder Hausfreigabe steht im Kreis `Gesperrt`. Die
+  Lüfterbedienung bleibt gesperrt, der Sollwert kann aber weiterhin für den
+  nächsten Start eingestellt werden.
+- Auch wenn die Climate-Entity selbst auf `off` steht, bleibt der
+  Sollwertregler bedienbar. Ist `plant_mode_entity` konfiguriert, gelten dabei
+  weiterhin die passenden Heiz- beziehungsweise Kühlgrenzen.
 - Bei einer konfigurierten Störung, einem offenen Fenster oder einem laufenden
-  Plant-Moduswechsel sind Sollwert und Lüfter ebenfalls gesperrt.
+  Plant-Moduswechsel bleibt die Anlage gesperrt. Der Sollwert kann weiterhin
+  vorbereitet werden, die Lüfterbedienung bleibt gesperrt.
+- Nur wenn die Climate-Entity `unknown` oder `unavailable` ist, wird auch die
+  Sollwertbedienung deaktiviert.
 - Der Raumname wird im Kreis hell und gut lesbar angezeigt.
 - Unter dem Betriebsstatus zeigt die Karte ausschließlich den Messwert der
   konfigurierten Außentemperatur mit Einheit, ohne Textlabel.
