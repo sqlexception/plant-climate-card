@@ -1,0 +1,187 @@
+name: Apply config cleanup
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/apply-config-cleanup.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply cleanup
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          def require_change(before: str, after: str, label: str) -> str:
+              if before == after:
+                  raise SystemExit(f"No change for: {label}")
+              return after
+
+          # Card editor cleanup and requested defaults.
+          path = Path("src/plant-climate-card.ts")
+          card = path.read_text()
+          original = card
+
+          for key in (
+              "global_enable_entity",
+              "plant_mode_entity",
+              "controller_state_entity",
+              "blocking_reason_entity",
+              "fault_entity",
+              "defrost_entity",
+              "window_entity",
+          ):
+              card = re.sub(rf'^  {key}: .*\n', '', card, count=1, flags=re.M)
+
+          card = re.sub(
+              r'\n            \{\n              name: "global_enable_entity",\n              selector: \{ entity: \{ domain: "input_boolean" \} \}\n            \},',
+              '',
+              card,
+              count=1,
+          )
+
+          card = re.sub(
+              r'\n        \{\n          type: "expandable",\n          title: "Node-RED- und Plant-Zustände",.*?\n        \},(?=\n        \{\n          type: "expandable",\n          title: "Grenzwerte")',
+              '',
+              card,
+              count=1,
+              flags=re.S,
+          )
+
+          card = re.sub(
+              r'\n        if \(schema\.name === "plant_mode_entity"\) \{\n          return ".*?";\n        \}',
+              '',
+              card,
+              count=1,
+          )
+
+          card = card.replace('step: 0.5, mode: "box"', 'step: 1, mode: "box"')
+          card = card.replace(
+              'name: "cool_manual_min",\n                  selector: { number: { min: 25, max: 30, step: 1, mode: "box" } }',
+              'name: "cool_manual_min",\n                  selector: { number: { min: 23, max: 30, step: 1, mode: "box" } }',
+              1,
+          )
+          card = card.replace(
+              'name: "temperature_step",\n                  selector: { number: { min: 0.1, max: 1, step: 0.1, mode: "box" } }',
+              'name: "temperature_step",\n                  selector: { number: { min: 1, max: 2, step: 1, mode: "box" } }',
+              1,
+          )
+
+          card = card.replace('      heat_manual_max: 23,', '      heat_manual_max: 22,', 1)
+          card = card.replace('      cool_manual_min: 25,', '      cool_manual_min: 23,', 1)
+          card = card.replace('      temperature_step: 0.5,', '      temperature_step: 1,', 1)
+
+          require_change(original, card, "plant-climate-card.ts")
+          path.write_text(card)
+
+          # Core defaults must match the visual editor defaults.
+          path = Path("src/logic.ts")
+          logic = path.read_text()
+          original = logic
+          logic = logic.replace('  coolManualMin: 22,', '  coolManualMin: 23,', 1)
+          logic = logic.replace('  temperatureStep: 0.5', '  temperatureStep: 1', 1)
+          require_change(original, logic, "logic.ts")
+          path.write_text(logic)
+
+          # Slider: whole-number steps and show target number only while dragging.
+          path = Path("src/plant-temperature-dial.ts")
+          dial = path.read_text()
+          original = dial
+          dial = dial.replace('      delta = 1;', '      delta = this.displayStep();', 1)
+          dial = dial.replace('      delta = -1;', '      delta = -this.displayStep();', 1)
+          dial = dial.replace(
+              '''                  <div class="pointer">
+                    <div class="pointer-value">${this.formatTemperature(target)}</div>
+                    <div class="pointer-dot"></div>
+                  </div>''',
+              '''                  <div class="pointer">
+                    ${this.dragging
+                      ? html`<div class="pointer-value">${this.formatTemperature(target)}</div>`
+                      : nothing}
+                    <div class="pointer-dot"></div>
+                  </div>''',
+              1,
+          )
+          dial = dial.replace(
+              '''  private clampDisplayTemperature(value: number): number {
+    const range = this.displayRange();
+    return Math.min(range.max, Math.max(range.min, Math.round(value)));
+  }''',
+              '''  private displayStep(): number {
+    return Math.max(1, Math.round(this.range.step));
+  }
+
+  private clampDisplayTemperature(value: number): number {
+    const range = this.displayRange();
+    const step = this.displayStep();
+    const stepped =
+      Math.round((value - range.min) / step) * step + range.min;
+    return Math.min(range.max, Math.max(range.min, stepped));
+  }''',
+              1,
+          )
+          require_change(original, dial, "plant-temperature-dial.ts")
+          path.write_text(dial)
+
+          # Tests for the new defaults and 1 K default step.
+          path = Path("tests/logic.test.ts")
+          tests = path.read_text()
+          original = tests
+          tests = tests.replace('mindestens 22 °C', 'mindestens 23 °C')
+          tests = tests.replace('coolingManualMinimum()).toBe(22)', 'coolingManualMinimum()).toBe(23)')
+          tests = tests.replace('coolingManualMinimum(20)).toBe(22)', 'coolingManualMinimum(20)).toBe(23)')
+          tests = tests.replace('von 17 °C auf 22 °C', 'von 17 °C auf 23 °C')
+          tests = tests.replace('{ min: 22, max: 30, effectiveMode: "cool" }', '{ min: 23, max: 30, effectiveMode: "cool" }')
+          tests = tests.replace('clampTemperature(17, range)).toBe(22)', 'clampTemperature(17, range)).toBe(23)')
+          tests = tests.replace('rundet Sollwerte in 0,5-K-Schritten', 'rundet Sollwerte standardmäßig in 1-K-Schritten')
+          tests = tests.replace('expect(clampTemperature(27.24, range)).toBe(27);\n    expect(clampTemperature(27.26, range)).toBe(27.5);', 'expect(clampTemperature(27.49, range)).toBe(27);\n    expect(clampTemperature(27.51, range)).toBe(28);')
+          require_change(original, tests, "logic.test.ts")
+          path.write_text(tests)
+
+          # Keep documentation aligned with the cleaned-up editor.
+          path = Path("README.md")
+          readme = path.read_text()
+          original = readme
+          readme = readme.replace('manuelles Heizen: maximal 23 °C', 'manuelles Heizen: maximal 22 °C')
+          readme = readme.replace('manuelles Kühlen über die Karte: mindestens 25 °C', 'manuelles Kühlen über die Karte: mindestens 23 °C')
+          readme = readme.replace('Sollwert-Schrittweite: 0,5 K', 'Sollwert-Schrittweite: 1 K')
+          readme = readme.replace('global_enable_entity: input_boolean.haus_klimaregelung_01_freigabe\n', '')
+          readme = readme.replace('Bei ausgeschalteter Raum- oder Hausfreigabe', 'Bei ausgeschalteter Raumfreigabe')
+          readme = readme.replace('können sie im grafischen Karteneditor zugeordnet werden:', 'können sie bei Bedarf weiterhin direkt in YAML eingetragen werden. Sie werden im grafischen Karteneditor bewusst nicht mehr angezeigt:')
+          readme = readme.replace('Nicht vorhandene optionale Entities werden nicht eingetragen.', 'Nicht vorhandene optionale Entities werden nicht eingetragen. Bestehende YAML-Konfigurationen mit diesen Feldern bleiben kompatibel.')
+          require_change(original, readme, "README.md")
+          path.write_text(readme)
+          PY
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify and build
+        run: npm run verify
+
+      - name: Commit result and remove one-time workflow
+        run: |
+          git rm .github/workflows/apply-config-cleanup.yml
+          git add src/plant-climate-card.ts src/plant-temperature-dial.ts src/logic.ts tests/logic.test.ts README.md plant-climate-card.js plant-climate-card.js.map
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Clean up card settings and integer temperature UI"
+          git push
