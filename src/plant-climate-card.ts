@@ -289,6 +289,10 @@ export class PlantClimateCard extends LitElement {
       windowOpen ||
       changeover;
 
+    // Der Sollwert bleibt auch bei ausgeschalteter oder gesperrter Anlage
+    // bedienbar. Nur eine nicht erreichbare Climate-Entity sperrt den Regler.
+    const temperatureBlocked = unavailable;
+
     const visualMode = this.visualMode(mode, reportedAction, plantMode);
     const action = temperatureDemandAction({
       mode,
@@ -341,7 +345,7 @@ export class PlantClimateCard extends LitElement {
             .statusLabel=${dialState.label}
             .statusIcon=${dialState.icon}
             .range=${range}
-            .disabled=${controlsBlocked}
+            .disabled=${temperatureBlocked}
             @temperature-changed=${this.onTemperatureChanged}
           ></plant-temperature-dial>
 
