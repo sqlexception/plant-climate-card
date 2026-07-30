@@ -15,7 +15,7 @@ export class PlantTemperatureDial extends LitElement {
   @property({ attribute: false }) range: TemperatureRange = {
     min: 16,
     max: 30,
-    step: 0.5,
+    step: 1,
     effectiveMode: "off"
   };
   @property({ type: Boolean }) disabled = false;
@@ -105,7 +105,9 @@ export class PlantTemperatureDial extends LitElement {
               ? nothing
               : html`
                   <div class="pointer">
-                    <div class="pointer-value">${this.formatTemperature(target)}</div>
+                    ${this.dragging
+                      ? html`<div class="pointer-value">${this.formatTemperature(target)}</div>`
+                      : nothing}
                     <div class="pointer-dot"></div>
                   </div>
                 `}
@@ -153,10 +155,10 @@ export class PlantTemperatureDial extends LitElement {
     if (this.disabled || this.mode === "fan_only") return;
     let delta = 0;
     if (event.key === "ArrowUp" || event.key === "ArrowRight") {
-      delta = 1;
+      delta = this.displayStep();
     }
     if (event.key === "ArrowDown" || event.key === "ArrowLeft") {
-      delta = -1;
+      delta = -this.displayStep();
     }
     if (delta === 0) return;
 
@@ -217,9 +219,16 @@ export class PlantTemperatureDial extends LitElement {
     return { min: fallback, max: fallback };
   }
 
+  private displayStep(): number {
+    return Math.max(1, Math.round(this.range.step));
+  }
+
   private clampDisplayTemperature(value: number): number {
     const range = this.displayRange();
-    return Math.min(range.max, Math.max(range.min, Math.round(value)));
+    const step = this.displayStep();
+    const stepped =
+      Math.round((value - range.min) / step) * step + range.min;
+    return Math.min(range.max, Math.max(range.min, stepped));
   }
 
   private temperatureToAngle(temperature: number): number {
