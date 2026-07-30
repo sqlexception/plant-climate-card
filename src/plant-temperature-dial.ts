@@ -1,6 +1,5 @@
 import { LitElement, css, html, nothing } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
-import { clampTemperature, roundToStep } from "./logic";
 import type { HVACMode, TemperatureRange } from "./types";
 
 @customElement("plant-temperature-dial")
@@ -33,12 +32,13 @@ export class PlantTemperatureDial extends LitElement {
       this.selectedTemperature =
         this.targetTemperature === undefined
           ? undefined
-          : clampTemperature(this.targetTemperature, this.range);
+          : this.clampDisplayTemperature(this.targetTemperature);
     }
   }
 
   protected override render() {
     const target = this.selectedTemperature ?? this.targetTemperature;
+    const displayRange = this.displayRange();
     const pointerAngle =
       target === undefined ? 150 : this.temperatureToAngle(target);
     const interactive = !this.disabled && this.mode !== "fan_only";
@@ -57,9 +57,9 @@ export class PlantTemperatureDial extends LitElement {
           class="handle"
           role="slider"
           aria-label="Solltemperatur"
-          aria-valuemin=${this.range.min}
-          aria-valuemax=${this.range.max}
-          aria-valuenow=${target ?? this.range.min}
+          aria-valuemin=${displayRange.min}
+          aria-valuemax=${displayRange.max}
+          aria-valuenow=${target ?? displayRange.min}
           aria-disabled=${interactive ? "false" : "true"}
           tabindex=${interactive ? "0" : "-1"}
           @keydown=${this.onKeyDown}
@@ -143,23 +143,28 @@ export class PlantTemperatureDial extends LitElement {
     if (event.pointerId !== this.activePointer) return;
     this.dragging = false;
     this.activePointer = undefined;
-    this.selectedTemperature = this.targetTemperature;
+    this.selectedTemperature =
+      this.targetTemperature === undefined
+        ? undefined
+        : this.clampDisplayTemperature(this.targetTemperature);
   }
 
   private onKeyDown(event: KeyboardEvent): void {
     if (this.disabled || this.mode === "fan_only") return;
     let delta = 0;
     if (event.key === "ArrowUp" || event.key === "ArrowRight") {
-      delta = this.range.step;
+      delta = 1;
     }
     if (event.key === "ArrowDown" || event.key === "ArrowLeft") {
-      delta = -this.range.step;
+      delta = -1;
     }
     if (delta === 0) return;
 
     event.preventDefault();
-    const current = this.selectedTemperature ?? this.targetTemperature ?? this.range.min;
-    this.selectedTemperature = clampTemperature(current + delta, this.range);
+    const current = this.clampDisplayTemperature(
+      this.selectedTemperature ?? this.targetTemperature ?? this.displayRange().min
+    );
+    this.selectedTemperature = this.clampDisplayTemperature(current + delta);
     this.dispatchTemperature();
   }
 
@@ -177,11 +182,10 @@ export class PlantTemperatureDial extends LitElement {
 
     const arcPosition = angle >= 150 ? angle - 150 : 210 + angle;
     const ratio = Math.min(1, Math.max(0, arcPosition / 255));
-    const value = this.range.min + ratio * (this.range.max - this.range.min);
-    this.selectedTemperature = clampTemperature(
-      roundToStep(value, this.range.step, this.range.min),
-      this.range
-    );
+    const displayRange = this.displayRange();
+    const value =
+      displayRange.min + ratio * (displayRange.max - displayRange.min);
+    this.selectedTemperature = this.clampDisplayTemperature(value);
   }
 
   private finishSelection(): void {
@@ -201,16 +205,34 @@ export class PlantTemperatureDial extends LitElement {
     );
   }
 
+  private displayRange(): { min: number; max: number } {
+    const min = Math.ceil(this.range.min);
+    const max = Math.floor(this.range.max);
+
+    if (min <= max) {
+      return { min, max };
+    }
+
+    const fallback = Math.round((this.range.min + this.range.max) / 2);
+    return { min: fallback, max: fallback };
+  }
+
+  private clampDisplayTemperature(value: number): number {
+    const range = this.displayRange();
+    return Math.min(range.max, Math.max(range.min, Math.round(value)));
+  }
+
   private temperatureToAngle(temperature: number): number {
-    if (this.range.max <= this.range.min) return 150;
+    const range = this.displayRange();
+    if (range.max <= range.min) return 150;
     const ratio =
-      (clampTemperature(temperature, this.range) - this.range.min) /
-      (this.range.max - this.range.min);
+      (this.clampDisplayTemperature(temperature) - range.min) /
+      (range.max - range.min);
     return 150 + ratio * 255;
   }
 
   private formatTemperature(value: number): string {
-    return Number.isInteger(value) ? value.toFixed(0) : value.toFixed(1);
+    return Math.round(value).toFixed(0);
   }
 
   static override styles = css`
