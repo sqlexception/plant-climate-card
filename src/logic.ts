@@ -9,7 +9,7 @@ export const DEFAULTS = {
   heatDefault: 21,
   heatManualMax: 23,
   coolAutoDefault: 25,
-  coolManualMin: 23,
+  coolManualMin: 25,
   coolOutdoorDelta: 8,
   temperatureStep: 0.5
 } as const;
@@ -33,15 +33,17 @@ export function boolEntityIsOn(entity?: HassEntity): boolean | undefined {
   return entity.state === "on";
 }
 
+export function inferRoomEnableEntity(climateEntity: string): string | undefined {
+  const match = /^climate\.(.+)_inneneinheit$/.exec(climateEntity);
+  return match
+    ? `input_boolean.${match[1]}_01_freigabe`
+    : undefined;
+}
+
 export function coolingManualMinimum(
-  outsideTemperature: number | undefined,
-  manualMinimum: number = DEFAULTS.coolManualMin,
-  outdoorDelta: number = DEFAULTS.coolOutdoorDelta
+  manualMinimum: number = DEFAULTS.coolManualMin
 ): number {
-  if (outsideTemperature === undefined) {
-    return manualMinimum;
-  }
-  return Math.max(manualMinimum, outsideTemperature - outdoorDelta);
+  return Math.max(DEFAULTS.coolManualMin, manualMinimum);
 }
 
 export function automaticTarget(
@@ -101,9 +103,7 @@ export function allowedTemperatureRange(options: {
     min = Math.max(
       min,
       coolingManualMinimum(
-        outsideTemperature,
-        config.cool_manual_min ?? DEFAULTS.coolManualMin,
-        config.cool_outdoor_delta ?? DEFAULTS.coolOutdoorDelta
+        config.cool_manual_min ?? DEFAULTS.coolManualMin
       )
     );
   }

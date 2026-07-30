@@ -51,6 +51,7 @@ export class PlantTemperatureDial extends LitElement {
 
     return html`
       <div class="screen ${classes}">
+        <div class="bezel"></div>
         <div class="glow"></div>
         <div
           class="handle"
@@ -223,36 +224,70 @@ export class PlantTemperatureDial extends LitElement {
 
     .screen {
       position: relative;
-      height: 222px;
+      height: 224px;
       overflow: visible;
       display: grid;
       place-items: center;
     }
 
+    .bezel,
     .glow,
     .handle {
       position: absolute;
-      width: 194px;
-      height: 194px;
+      top: 50%;
+      left: 50%;
       border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .bezel {
+      width: 200px;
+      height: 200px;
+      background: rgb(19 19 19);
+      box-shadow:
+        inset 0 1px 1px rgb(255 255 255 / 2%),
+        0 3px 10px rgb(0 0 0 / 38%);
     }
 
     .glow {
+      width: 184px;
+      height: 184px;
       background: rgba(100, 100, 100, 0.12);
-      box-shadow: rgba(0, 0, 0, 0.45) 0 5px 18px -7px;
+      box-shadow: rgb(0 0 0 / 45%) 0 4px 14px -2px;
+      will-change: filter, opacity, box-shadow;
     }
 
     .screen.heat .glow {
-      border: 1px solid rgb(156 115 0 / 20%);
-      background: rgb(255 143 7 / 30%);
-      box-shadow: rgb(255 177 0 / 30%) 0 5px 16px -2px;
+      background: conic-gradient(
+        from 0deg,
+        rgb(255 143 7 / 10%) 0deg,
+        rgb(255 143 7 / 34%) 76deg,
+        rgb(255 143 7 / 80%) 132deg,
+        rgb(255 144 7) 180deg,
+        rgb(255 143 7 / 80%) 228deg,
+        rgb(255 143 7 / 34%) 284deg,
+        rgb(255 143 7 / 10%) 360deg
+      );
+      box-shadow:
+        rgb(255 177 0 / 22%) 0 5px 15px -2px,
+        rgb(255 143 7 / 12%) 0 0 10px 0;
     }
 
     .screen.cool .glow,
     .screen.dry .glow {
-      border: 1px solid rgb(7 186 255 / 20%);
-      background: rgb(7 186 255 / 30%);
-      box-shadow: rgb(0 161 255 / 30%) 0 5px 16px -2px;
+      background: conic-gradient(
+        from 0deg,
+        rgb(7 186 255 / 10%) 0deg,
+        rgb(7 186 255 / 34%) 76deg,
+        rgb(7 186 255 / 80%) 132deg,
+        rgb(7 186 255) 180deg,
+        rgb(7 186 255 / 80%) 228deg,
+        rgb(7 186 255 / 34%) 284deg,
+        rgb(7 186 255 / 10%) 360deg
+      );
+      box-shadow:
+        rgb(0 161 255 / 24%) 0 5px 15px -2px,
+        rgb(7 186 255 / 12%) 0 0 10px 0;
     }
 
     .screen.heat.heating .glow {
@@ -264,8 +299,8 @@ export class PlantTemperatureDial extends LitElement {
     }
 
     .handle {
-      width: 184px;
-      height: 184px;
+      width: 180px;
+      height: 180px;
       background: linear-gradient(
         0deg,
         rgb(19 19 19) 0%,
@@ -302,12 +337,12 @@ export class PlantTemperatureDial extends LitElement {
     }
 
     .name {
-      top: 25px;
+      top: 24px;
       padding: 0 36px;
       overflow: hidden;
-      color: rgb(204 204 204 / 36%);
+      color: rgb(204 204 204 / 28%);
       font-family: var(--paper-font-body1_-_font-family, Roboto, sans-serif);
-      font-size: 10px;
+      font-size: 9px;
       line-height: 1.2;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -318,7 +353,7 @@ export class PlantTemperatureDial extends LitElement {
       transform: translateY(-58%);
       padding-left: 7px;
       font-family: "Oswald", "Arial Narrow", Roboto, sans-serif;
-      font-size: 57px;
+      font-size: 56px;
       font-variant-numeric: tabular-nums;
       line-height: 1;
     }
@@ -326,8 +361,8 @@ export class PlantTemperatureDial extends LitElement {
     .current .degree {
       display: inline-block;
       margin-left: 2px;
-      transform: translateY(-23px);
-      font-size: 28px;
+      transform: translateY(-25px);
+      font-size: 30px;
     }
 
     .current .unknown {
@@ -335,7 +370,7 @@ export class PlantTemperatureDial extends LitElement {
     }
 
     .status {
-      bottom: 35px;
+      bottom: 37px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -347,9 +382,16 @@ export class PlantTemperatureDial extends LitElement {
     }
 
     .status ha-icon {
+      position: relative;
+      top: -2px;
+      flex: 0 0 18px;
       width: 18px;
       height: 18px;
       --mdc-icon-size: 18px;
+    }
+
+    .status span {
+      line-height: 18px;
     }
 
     .screen.heat .status {
@@ -367,7 +409,7 @@ export class PlantTemperatureDial extends LitElement {
     }
 
     .humidity {
-      bottom: 15px;
+      bottom: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -413,18 +455,18 @@ export class PlantTemperatureDial extends LitElement {
     }
 
     .pointer-dot {
-      width: 9px;
-      height: 9px;
-      margin: 10px 4px 0 auto;
+      width: 8px;
+      height: 8px;
+      margin: 11px 3px 0 auto;
       border-radius: 50%;
       background: rgb(154 40 40);
       transition: width 150ms ease, height 150ms ease, box-shadow 150ms ease;
     }
 
     .dragging .pointer-dot {
-      width: 13px;
-      height: 13px;
-      margin-top: 8px;
+      width: 12px;
+      height: 12px;
+      margin-top: 9px;
       background: rgb(255 0 0);
       box-shadow: 0 0 6px 1px red;
     }
@@ -432,11 +474,11 @@ export class PlantTemperatureDial extends LitElement {
     .pointer-value {
       position: absolute;
       right: 18px;
-      top: 2px;
+      top: -3px;
       font-family: Roboto, sans-serif;
       font-size: 10px;
       font-variant-numeric: tabular-nums;
-      transform: rotate(var(--counter-angle));
+      transform: rotate(80deg);
       transform-origin: center;
     }
 
@@ -448,24 +490,36 @@ export class PlantTemperatureDial extends LitElement {
     @keyframes heating {
       0%,
       100% {
-        background: #ff9007;
-        box-shadow: rgb(255 177 0) 0 5px 16px -2px;
+        filter: brightness(1.22);
+        opacity: 1;
+        box-shadow:
+          rgb(255 177 0 / 72%) 0 5px 17px -2px,
+          rgb(255 143 7 / 34%) 0 0 12px 0;
       }
       60% {
-        background: rgb(255 143 7 / 30%);
-        box-shadow: rgb(255 177 0 / 30%) 0 5px 16px -2px;
+        filter: brightness(0.84);
+        opacity: 0.62;
+        box-shadow:
+          rgb(255 177 0 / 24%) 0 4px 14px -2px,
+          rgb(255 143 7 / 12%) 0 0 8px 0;
       }
     }
 
     @keyframes cooling {
       0%,
       100% {
-        background: rgb(7 186 255);
-        box-shadow: rgb(0 161 255) 0 5px 16px -2px;
+        filter: brightness(1.2);
+        opacity: 1;
+        box-shadow:
+          rgb(0 161 255 / 76%) 0 5px 17px -2px,
+          rgb(7 186 255 / 36%) 0 0 12px 0;
       }
       60% {
-        background: rgb(7 186 255 / 30%);
-        box-shadow: rgb(0 161 255 / 30%) 0 5px 16px -2px;
+        filter: brightness(0.84);
+        opacity: 0.62;
+        box-shadow:
+          rgb(0 161 255 / 24%) 0 4px 14px -2px,
+          rgb(7 186 255 / 12%) 0 0 8px 0;
       }
     }
 

@@ -11,7 +11,7 @@ cards:
     heat_default: 21
     heat_manual_max: 23
     cool_auto_default: 25
-    cool_manual_min: 23
+    cool_manual_min: 25
     cool_outdoor_delta: 8
     temperature_step: 0.5
 
@@ -24,7 +24,7 @@ cards:
     heat_default: 21
     heat_manual_max: 23
     cool_auto_default: 25
-    cool_manual_min: 23
+    cool_manual_min: 25
     cool_outdoor_delta: 8
     temperature_step: 0.5
 
@@ -37,7 +37,7 @@ cards:
     heat_default: 21
     heat_manual_max: 23
     cool_auto_default: 25
-    cool_manual_min: 23
+    cool_manual_min: 25
     cool_outdoor_delta: 8
     temperature_step: 0.5
 
@@ -50,6 +50,6 @@ cards:
     heat_default: 21
     heat_manual_max: 23
     cool_auto_default: 25
-    cool_manual_min: 23
+    cool_manual_min: 25
     cool_outdoor_delta: 8
     temperature_step: 0.5

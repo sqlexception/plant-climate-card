@@ -12,6 +12,7 @@ import {
   clampTemperature,
   fanIcon,
   finiteNumber,
+  inferRoomEnableEntity,
   numericEntityState
 } from "./logic";
 import type {
@@ -21,7 +22,7 @@ import type {
   TemperatureRange
 } from "./types";
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 
 const formLabels: Record<string, string> = {
   entity: "Climate-Entity",
@@ -154,7 +155,7 @@ export class PlantClimateCard extends LitElement {
                 },
                 {
                   name: "cool_manual_min",
-                  selector: { number: { min: 16, max: 30, step: 0.5, mode: "box" } }
+                  selector: { number: { min: 25, max: 30, step: 0.5, mode: "box" } }
                 },
                 {
                   name: "cool_outdoor_delta",
@@ -211,7 +212,7 @@ export class PlantClimateCard extends LitElement {
       heat_default: 21,
       heat_manual_max: 23,
       cool_auto_default: 25,
-      cool_manual_min: 23,
+      cool_manual_min: 25,
       cool_outdoor_delta: 8,
       temperature_step: 0.5,
       show_fan: true,
@@ -271,9 +272,8 @@ export class PlantClimateCard extends LitElement {
     const blockingReason =
       this.entity(this.config.blocking_reason_entity)?.state ?? undefined;
 
-    const roomEnableState = boolEntityIsOn(
-      this.entity(this.config.room_enable_entity)
-    );
+    const roomEnableEntity = this.roomEnableEntity();
+    const roomEnableState = boolEntityIsOn(this.entity(roomEnableEntity));
     const globalEnableState = boolEntityIsOn(
       this.entity(this.config.global_enable_entity)
     );
@@ -311,6 +311,7 @@ export class PlantClimateCard extends LitElement {
       changeover,
       blockingReason
     });
+    const visualMode = this.visualMode(mode, action, plantMode);
 
     return html`
       <ha-card>
@@ -320,7 +321,7 @@ export class PlantClimateCard extends LitElement {
             .currentTemperature=${currentTemperature}
             .targetTemperature=${targetTemperature}
             .humidity=${humidity}
-            .mode=${this.visualMode(mode, action, plantMode)}
+            .mode=${visualMode}
             .action=${action}
             .statusLabel=${dialState.label}
             .statusIcon=${dialState.icon}
@@ -329,25 +330,24 @@ export class PlantClimateCard extends LitElement {
             @temperature-changed=${this.onTemperatureChanged}
           ></plant-temperature-dial>
 
-          <div class="bottom-controls">
-            ${this.config.room_enable_entity
-              ? html`
-                  <button
-                    class="icon-control power ${roomEnableState === true ? "active" : ""}"
-                    type="button"
-                    aria-label=${roomEnableState === true
-                      ? "Raumfreigabe ausschalten"
-                      : "Raumfreigabe einschalten"}
-                    title=${roomEnableState === true
-                      ? "Raumfreigabe ein"
-                      : "Raumfreigabe aus"}
-                    aria-pressed=${roomEnableState === true ? "true" : "false"}
-                    @click=${this.toggleRoomEnable}
-                  >
-                    <ha-icon icon="mdi:power-standby"></ha-icon>
-                  </button>
-                `
-              : nothing}
+          <div class="bottom-controls ${visualMode}">
+            <button
+              class="icon-control power ${roomEnableState === true ? "active" : ""}"
+              type="button"
+              aria-label=${roomEnableState === true
+                ? "Klimaanlage manuell ausschalten"
+                : "Klimaanlage manuell einschalten"}
+              title=${roomEnableEntity
+                ? roomEnableState === true
+                  ? "Manuell ausschalten"
+                  : "Manuell einschalten"
+                : "Raumfreigabe fehlt"}
+              aria-pressed=${roomEnableState === true ? "true" : "false"}
+              ?disabled=${!roomEnableEntity}
+              @click=${() => this.toggleRoomEnable(roomEnableEntity)}
+            >
+              <ha-icon icon="mdi:power-standby"></ha-icon>
+            </button>
 
             ${this.config.show_fan !== false
               ? fanModes.map(
@@ -449,13 +449,22 @@ export class PlantClimateCard extends LitElement {
       : [];
   }
 
-  private async toggleRoomEnable(): Promise<void> {
-    if (!this.hass || !this.config.room_enable_entity) return;
-    const state = boolEntityIsOn(this.entity(this.config.room_enable_entity));
+  private roomEnableEntity(): string | undefined {
+    if (this.config.room_enable_entity) {
+      return this.config.room_enable_entity;
+    }
+
+    const inferred = inferRoomEnableEntity(this.config.entity);
+    return inferred && this.entity(inferred) ? inferred : undefined;
+  }
+
+  private async toggleRoomEnable(roomEnableEntity?: string): Promise<void> {
+    if (!this.hass || !roomEnableEntity) return;
+    const state = boolEntityIsOn(this.entity(roomEnableEntity));
     await this.callService(
       "input_boolean",
       state === true ? "turn_off" : "turn_on",
-      { entity_id: this.config.room_enable_entity }
+      { entity_id: roomEnableEntity }
     );
   }
 
@@ -550,10 +559,15 @@ export class PlantClimateCard extends LitElement {
 
     ha-card {
       overflow: hidden;
+      background: var(--plant-climate-card-background, rgb(28 29 31));
+      box-shadow:
+        inset 0 1px 0 rgb(255 255 255 / 2%),
+        var(--ha-card-box-shadow, 0 2px 6px rgb(0 0 0 / 35%));
     }
 
     .card {
-      padding: 8px 14px 14px;
+      min-height: 280px;
+      padding: 0 14px;
       font-family: var(--paper-font-body1_-_font-family, Roboto, sans-serif);
     }
 
@@ -573,24 +587,35 @@ export class PlantClimateCard extends LitElement {
     }
 
     .bottom-controls {
+      min-height: 56px;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-wrap: wrap;
-      gap: 7px;
-      margin: -2px auto 0;
+      gap: 8px;
+      margin: 0 auto;
     }
 
     .icon-control {
-      width: 38px;
-      height: 38px;
+      width: 36px;
+      height: 36px;
       display: grid;
       place-items: center;
       border-radius: 50%;
-      background: var(--control-background);
-      box-shadow: rgb(0 0 0 / 30%) 0 1px 5px -1px;
-      color: var(--secondary-text-color);
-      transition: color 140ms ease, box-shadow 140ms ease, opacity 140ms ease;
+      background: rgb(27 28 30);
+      box-shadow:
+        inset 0 1px 1px rgb(255 255 255 / 3%),
+        rgb(0 0 0 / 82%) 0 0 4px 0;
+      color: rgb(204 204 204);
+      transition:
+        color 140ms ease,
+        box-shadow 140ms ease,
+        opacity 140ms ease,
+        transform 140ms ease;
+    }
+
+    .icon-control:not(:disabled):active {
+      transform: translateY(1px);
     }
 
     .icon-control:disabled {
@@ -599,16 +624,26 @@ export class PlantClimateCard extends LitElement {
     }
 
     .icon-control ha-icon {
-      width: 20px;
-      height: 20px;
-      --mdc-icon-size: 20px;
+      width: 22px;
+      height: 22px;
+      --mdc-icon-size: 22px;
     }
 
     .icon-control.active {
-      background: color-mix(in srgb, var(--primary-color) 18%, transparent);
-      color: var(--primary-color);
-      box-shadow: inset 0 0 0 1px
-        color-mix(in srgb, var(--primary-color) 38%, transparent);
+      box-shadow: rgb(0 0 0 / 82%) 0 0 7px -2px;
+    }
+
+    .icon-control.power.active {
+      color: var(--off-color);
+    }
+
+    .bottom-controls.heat .icon-control.fan.active {
+      color: var(--heat-color);
+    }
+
+    .bottom-controls.cool .icon-control.fan.active,
+    .bottom-controls.dry .icon-control.fan.active {
+      color: var(--cool-color);
     }
 
     .service-error {

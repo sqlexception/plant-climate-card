@@ -3,7 +3,8 @@ import {
   allowedTemperatureRange,
   automaticTarget,
   clampTemperature,
-  coolingManualMinimum
+  coolingManualMinimum,
+  inferRoomEnableEntity
 } from "../src/logic";
 import type { PlantClimateCardConfig } from "../src/types";
 
@@ -13,14 +14,53 @@ const config: PlantClimateCardConfig = {
 };
 
 describe("Plant-Klimagrenzen", () => {
+  it("findet die Raumfreigabe aus dem vereinbarten Entity-Namensschema", () => {
+    expect(
+      inferRoomEnableEntity(
+        "climate.eg_kuechenbereich_klimaanlage_inneneinheit"
+      )
+    ).toBe("input_boolean.eg_kuechenbereich_klimaanlage_01_freigabe");
+    expect(
+      inferRoomEnableEntity(
+        "climate.og_kinderzimmer_01_klimaanlage_inneneinheit"
+      )
+    ).toBe("input_boolean.og_kinderzimmer_01_klimaanlage_01_freigabe");
+    expect(inferRoomEnableEntity("climate.test")).toBeUndefined();
+  });
+
   it("verwendet für den automatischen Kühlstart mindestens 25 °C", () => {
     expect(automaticTarget("cool", 29, config)).toBe(25);
     expect(automaticTarget("cool", 38, config)).toBe(30);
   });
 
-  it("begrenzt manuelles Kühlen auf mindestens 23 °C und außen minus 8 K", () => {
-    expect(coolingManualMinimum(29)).toBe(23);
-    expect(coolingManualMinimum(34)).toBe(26);
+  it("begrenzt manuelles Kühlen unabhängig von außen auf mindestens 25 °C", () => {
+    expect(coolingManualMinimum()).toBe(25);
+    expect(coolingManualMinimum(23)).toBe(25);
+    expect(coolingManualMinimum(26)).toBe(26);
+  });
+
+  it("korrigiert einen unzulässigen Kühlwunsch von 17 °C auf 25 °C", () => {
+    const range = allowedTemperatureRange({
+      mode: "cool",
+      entityMin: 16,
+      entityMax: 30,
+      outsideTemperature: 32,
+      config
+    });
+    expect(range).toMatchObject({ min: 25, max: 30, effectiveMode: "cool" });
+    expect(clampTemperature(17, range)).toBe(25);
+  });
+
+  it("übernimmt alte Karten mit cool_manual_min 23 sicher als 25 °C", () => {
+    const range = allowedTemperatureRange({
+      mode: "cool",
+      entityMin: 16,
+      entityMax: 30,
+      outsideTemperature: 32,
+      config: { ...config, cool_manual_min: 23 }
+    });
+    expect(range.min).toBe(25);
+    expect(clampTemperature(17, range)).toBe(25);
   });
 
   it("begrenzt manuelles Heizen auf 23 °C", () => {
@@ -34,7 +74,7 @@ describe("Plant-Klimagrenzen", () => {
     expect(clampTemperature(25, range)).toBe(23);
   });
 
-  it("wendet im Automatikmodus die wirksame Plant-Betriebsart an", () => {
+  it("wendet für die manuelle Bedienung die wirksame Plant-Betriebsart an", () => {
     const range = allowedTemperatureRange({
       mode: "heat_cool",
       plantMode: "cool",
@@ -43,7 +83,7 @@ describe("Plant-Klimagrenzen", () => {
       outsideTemperature: 35,
       config
     });
-    expect(range).toMatchObject({ min: 27, max: 30, effectiveMode: "cool" });
+    expect(range).toMatchObject({ min: 25, max: 30, effectiveMode: "cool" });
   });
 
   it("rundet Sollwerte in 0,5-K-Schritten", () => {
@@ -51,10 +91,10 @@ describe("Plant-Klimagrenzen", () => {
       mode: "cool",
       entityMin: 16,
       entityMax: 30,
-      outsideTemperature: 29,
+      outsideTemperature: 34,
       config
     });
-    expect(clampTemperature(24.24, range)).toBe(24);
-    expect(clampTemperature(24.26, range)).toBe(24.5);
+    expect(clampTemperature(27.24, range)).toBe(27);
+    expect(clampTemperature(27.26, range)).toBe(27.5);
   });
 });
