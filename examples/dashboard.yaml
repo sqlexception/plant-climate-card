@@ -1,0 +1,55 @@
+type: grid
+columns: 2
+square: false
+cards:
+  - type: custom:plant-climate-card
+    entity: climate.eg_kuechenbereich_klimaanlage_inneneinheit
+    name: EG Küchenbereich
+    global_enable_entity: input_boolean.haus_klimaregelung_01_freigabe
+    room_enable_entity: input_boolean.eg_kuechenbereich_klimaanlage_01_freigabe
+    outside_temperature_entity: sensor.eg_kuechenbereich_klimaanlage_aussentemperatur
+    heat_default: 21
+    heat_manual_max: 23
+    cool_auto_default: 25
+    cool_manual_min: 23
+    cool_outdoor_delta: 8
+    temperature_step: 0.5
+
+  - type: custom:plant-climate-card
+    entity: climate.eg_schlafzimmer_klimaanlage_inneneinheit
+    name: EG Schlafzimmer
+    global_enable_entity: input_boolean.haus_klimaregelung_01_freigabe
+    room_enable_entity: input_boolean.eg_schlafzimmer_klimaanlage_01_freigabe
+    outside_temperature_entity: sensor.eg_schlafzimmer_klimaanlage_aussentemperatur
+    heat_default: 21
+    heat_manual_max: 23
+    cool_auto_default: 25
+    cool_manual_min: 23
+    cool_outdoor_delta: 8
+    temperature_step: 0.5
+
+  - type: custom:plant-climate-card
+    entity: climate.eg_zimmer_01_klimaanlage_inneneinheit
+    name: EG Zimmer 01
+    global_enable_entity: input_boolean.haus_klimaregelung_01_freigabe
+    room_enable_entity: input_boolean.eg_zimmer_01_klimaanlage_01_freigabe
+    outside_temperature_entity: sensor.eg_zimmer_01_klimaanlage_aussentemperatur
+    heat_default: 21
+    heat_manual_max: 23
+    cool_auto_default: 25
+    cool_manual_min: 23
+    cool_outdoor_delta: 8
+    temperature_step: 0.5
+
+  - type: custom:plant-climate-card
+    entity: climate.og_kinderzimmer_01_klimaanlage_inneneinheit
+    name: OG Kinderzimmer 01
+    global_enable_entity: input_boolean.haus_klimaregelung_01_freigabe
+    room_enable_entity: input_boolean.og_kinderzimmer_01_klimaanlage_01_freigabe
+    outside_temperature_entity: sensor.og_kinderzimmer_01_klimaanlage_aussentemperatur
+    heat_default: 21
+    heat_manual_max: 23
+    cool_auto_default: 25
+    cool_manual_min: 23
+    cool_outdoor_delta: 8
+    temperature_step: 0.5
