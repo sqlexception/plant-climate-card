@@ -1,0 +1,76 @@
+name: Release 1.9.0
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'release-1.9.0'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Set version 1.9.0
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          for filename in ("package.json", "package-lock.json"):
+              path = Path(filename)
+              text = path.read_text().replace('"version": "1.6.0"', '"version": "1.9.0"')
+              path.write_text(text)
+
+          path = Path("src/plant-climate-card.ts")
+          path.write_text(path.read_text().replace('const VERSION = "1.6.0";', 'const VERSION = "1.9.0";'))
+
+          path = Path("README.md")
+          path.write_text(path.read_text().replace('plant-climate-card.js?v=1.6.0', 'plant-climate-card.js?v=1.9.0'))
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify and build
+        run: npm run verify
+
+      - name: Prepare release commit
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm -f .release-1.9.0-trigger .github/workflows/release-1.9.0.yml
+          git add package.json package-lock.json src/plant-climate-card.ts README.md plant-climate-card.js plant-climate-card.js.map
+          git commit -m "Release 1.9.0"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git rev-parse -q --verify "refs/tags/1.9.0" >/dev/null; then
+            echo "Tag 1.9.0 already exists"
+            exit 1
+          fi
+          git tag -a 1.9.0 -m "Plant Climate Card 1.9.0"
+          git push origin 1.9.0
+          gh release create 1.9.0 plant-climate-card.js \
+            --verify-tag \
+            --title "Plant Climate Card 1.9.0" \
+            --notes "HACS release with the latest climate card improvements:\n\n- target temperature remains adjustable while the room is off\n- integer temperature display and 1 K target steps\n- fixed 18–30 °C visual dial scale\n- heating selectable from 18 to 22 °C\n- cooling selectable from 23 to 30 °C\n- target value shown only while dragging\n- simplified card editor without global and Node-RED/plant configuration fields"
