@@ -35,13 +35,13 @@ describe("Plant-Klimagrenzen", () => {
     expect(automaticTarget("cool", 38, config)).toBe(30);
   });
 
-  it("begrenzt manuelles Kühlen standardmäßig auf mindestens 22 °C", () => {
-    expect(coolingManualMinimum()).toBe(22);
-    expect(coolingManualMinimum(20)).toBe(22);
+  it("begrenzt manuelles Kühlen standardmäßig auf mindestens 23 °C", () => {
+    expect(coolingManualMinimum()).toBe(23);
+    expect(coolingManualMinimum(20)).toBe(23);
     expect(coolingManualMinimum(26)).toBe(26);
   });
 
-  it("korrigiert einen unzulässigen Kühlwunsch von 17 °C auf 22 °C", () => {
+  it("korrigiert einen unzulässigen Kühlwunsch von 17 °C auf 23 °C", () => {
     const range = allowedTemperatureRange({
       mode: "cool",
       entityMin: 16,
@@ -49,8 +49,8 @@ describe("Plant-Klimagrenzen", () => {
       outsideTemperature: 32,
       config
     });
-    expect(range).toMatchObject({ min: 22, max: 30, effectiveMode: "cool" });
-    expect(clampTemperature(17, range)).toBe(22);
+    expect(range).toMatchObject({ min: 23, max: 30, effectiveMode: "cool" });
+    expect(clampTemperature(17, range)).toBe(23);
   });
 
   it("übernimmt höhere konfigurierte Kühl-Minima", () => {
@@ -85,10 +85,10 @@ describe("Plant-Klimagrenzen", () => {
       outsideTemperature: 35,
       config
     });
-    expect(range).toMatchObject({ min: 22, max: 30, effectiveMode: "cool" });
+    expect(range).toMatchObject({ min: 23, max: 30, effectiveMode: "cool" });
   });
 
-  it("rundet Sollwerte in 0,5-K-Schritten", () => {
+  it("rundet Sollwerte standardmäßig in 1-K-Schritten", () => {
     const range = allowedTemperatureRange({
       mode: "cool",
       entityMin: 16,
@@ -96,8 +96,8 @@ describe("Plant-Klimagrenzen", () => {
       outsideTemperature: 34,
       config
     });
-    expect(clampTemperature(27.24, range)).toBe(27);
-    expect(clampTemperature(27.26, range)).toBe(27.5);
+    expect(clampTemperature(27.49, range)).toBe(27);
+    expect(clampTemperature(27.51, range)).toBe(28);
   });
 
   it("animiert Kühlen nur bei einem Sollwert unter der Isttemperatur", () => {
