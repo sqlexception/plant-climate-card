@@ -24,7 +24,7 @@ import type {
   TemperatureRange
 } from "./types";
 
-const VERSION = "1.6.0";
+const VERSION = "1.7.0";
 
 const formLabels: Record<string, string> = {
   entity: "Climate-Entity",

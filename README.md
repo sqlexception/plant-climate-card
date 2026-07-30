@@ -64,7 +64,7 @@ Regelinstanz neben Node-RED erzeugen.
 2. In Home Assistant unter **Einstellungen → Dashboards → Ressourcen** ergänzen:
 
    ```text
-   /local/plant-climate-card/plant-climate-card.js?v=1.6.0
+   /local/plant-climate-card/plant-climate-card.js?v=1.7.0
    ```
 
    Ressourcentyp: **JavaScript-Modul**
