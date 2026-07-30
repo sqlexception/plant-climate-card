@@ -9,9 +9,9 @@ export const DEFAULTS = {
   heatDefault: 21,
   heatManualMax: 22,
   coolAutoDefault: 25,
-  coolManualMin: 22,
+  coolManualMin: 23,
   coolOutdoorDelta: 8,
-  temperatureStep: 0.5
+  temperatureStep: 1
 } as const;
 
 export function finiteNumber(value: unknown): number | undefined {
