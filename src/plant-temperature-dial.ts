@@ -41,7 +41,7 @@ export class PlantTemperatureDial extends LitElement {
     const target = this.selectedTemperature ?? this.targetTemperature;
     const pointerAngle =
       target === undefined ? 150 : this.temperatureToAngle(target);
-    const interactive = !this.disabled && this.mode !== "off" && this.mode !== "fan_only";
+    const interactive = !this.disabled && this.mode !== "fan_only";
     const classes = [
       this.mode,
       this.action,
@@ -101,7 +101,7 @@ export class PlantTemperatureDial extends LitElement {
             @pointerup=${this.onPointerUp}
             @pointercancel=${this.onPointerCancel}
           >
-            ${this.mode === "off" || this.mode === "fan_only" || target === undefined
+            ${this.mode === "fan_only" || target === undefined
               ? nothing
               : html`
                   <div class="pointer">
@@ -116,7 +116,7 @@ export class PlantTemperatureDial extends LitElement {
   }
 
   private onPointerDown(event: PointerEvent): void {
-    if (this.disabled || this.mode === "off" || this.mode === "fan_only") return;
+    if (this.disabled || this.mode === "fan_only") return;
     const layer = event.currentTarget as HTMLElement;
     this.activePointer = event.pointerId;
     this.dragging = true;
@@ -147,7 +147,7 @@ export class PlantTemperatureDial extends LitElement {
   }
 
   private onKeyDown(event: KeyboardEvent): void {
-    if (this.disabled || this.mode === "off" || this.mode === "fan_only") return;
+    if (this.disabled || this.mode === "fan_only") return;
     let delta = 0;
     if (event.key === "ArrowUp" || event.key === "ArrowRight") {
       delta = this.range.step;
