@@ -94,6 +94,11 @@ export function temperatureDemandAction(options: {
     controlsBlocked = false,
     reportedAction
   } = options;
+
+  // Ein tatsächlich ausgeschaltetes Gerät bleibt in der Anzeige AUS.
+  // Der Plant-Modus wird bei AUS nur für die zulässigen Sollwertgrenzen genutzt.
+  if (mode === "off") return "off";
+
   const effectiveMode = resolveEffectiveMode(mode, plantMode);
 
   if (effectiveMode === "off") return "off";
@@ -230,7 +235,7 @@ export function modeIcon(mode: string): string {
     dry: "mdi:water-percent",
     fan_only: "mdi:fan"
   };
-  return icons[mode] ?? "mdi:thermostat";
+  return labels[mode] ?? "mdi:thermostat";
 }
 
 export function actionIcon(action: string, mode: string): string {
