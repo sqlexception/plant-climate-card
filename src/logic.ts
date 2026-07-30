@@ -69,7 +69,10 @@ export function automaticTarget(
 }
 
 export function resolveEffectiveMode(mode: HVACMode, plantMode?: string): HVACMode {
-  if ((mode === "heat_cool" || mode === "auto") && (plantMode === "heat" || plantMode === "cool")) {
+  if (
+    (mode === "off" || mode === "heat_cool" || mode === "auto") &&
+    (plantMode === "heat" || plantMode === "cool")
+  ) {
     return plantMode;
   }
   return mode;
