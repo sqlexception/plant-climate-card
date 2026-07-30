@@ -340,7 +340,7 @@ export class PlantTemperatureDial extends LitElement {
       top: 24px;
       padding: 0 36px;
       overflow: hidden;
-      color: rgb(204 204 204 / 28%);
+      color: rgb(224 224 224 / 76%);
       font-family: var(--paper-font-body1_-_font-family, Roboto, sans-serif);
       font-size: 9px;
       line-height: 1.2;

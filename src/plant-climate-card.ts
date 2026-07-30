@@ -13,7 +13,8 @@ import {
   fanIcon,
   finiteNumber,
   inferRoomEnableEntity,
-  numericEntityState
+  numericEntityState,
+  temperatureDemandAction
 } from "./logic";
 import type {
   HassEntity,
@@ -22,7 +23,7 @@ import type {
   TemperatureRange
 } from "./types";
 
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 
 const formLabels: Record<string, string> = {
   entity: "Climate-Entity",
@@ -252,7 +253,10 @@ export class PlantClimateCard extends LitElement {
     const unavailable =
       climate.state === "unavailable" || climate.state === "unknown";
     const mode = unavailable ? "off" : climate.state;
-    const action = String(climate.attributes.hvac_action ?? (mode === "off" ? "off" : "idle"));
+    const reportedAction =
+      climate.attributes.hvac_action === undefined
+        ? undefined
+        : String(climate.attributes.hvac_action);
     const name =
       this.config.name ??
       String(climate.attributes.friendly_name ?? this.config.entity);
@@ -292,6 +296,15 @@ export class PlantClimateCard extends LitElement {
       windowOpen ||
       changeover;
 
+    const visualMode = this.visualMode(mode, reportedAction, plantMode);
+    const action = temperatureDemandAction({
+      mode,
+      plantMode,
+      currentTemperature,
+      targetTemperature,
+      controlsBlocked,
+      reportedAction
+    });
     const range = this.temperatureRange(
       climate,
       mode,
@@ -301,7 +314,7 @@ export class PlantClimateCard extends LitElement {
     const fanModes = this.stringArray(climate.attributes.fan_modes);
     const fanMode = String(climate.attributes.fan_mode ?? "");
     const dialState = this.dialState({
-      mode,
+      mode: visualMode,
       action,
       roomEnableState,
       globalEnableState,
@@ -311,7 +324,6 @@ export class PlantClimateCard extends LitElement {
       changeover,
       blockingReason
     });
-    const visualMode = this.visualMode(mode, action, plantMode);
 
     return html`
       <ha-card>
@@ -397,10 +409,10 @@ export class PlantClimateCard extends LitElement {
     if (data.windowOpen) return { label: "Fenster offen", icon: "mdi:window-open-variant" };
     if (data.changeover) return { label: "Moduswechsel", icon: "mdi:swap-horizontal" };
     if (data.globalEnableState === false) {
-      return { label: "Global gesperrt", icon: "mdi:home-lock" };
+      return { label: "Gesperrt", icon: "mdi:home-lock" };
     }
     if (data.roomEnableState === false) {
-      return { label: "Freigabe aus", icon: "mdi:power-standby" };
+      return { label: "Gesperrt", icon: "mdi:lock" };
     }
     if (
       data.blockingReason &&
@@ -410,12 +422,10 @@ export class PlantClimateCard extends LitElement {
     ) {
       return { label: "Gesperrt", icon: "mdi:lock-clock" };
     }
-    if (data.action === "idle") {
-      if (data.mode === "heat") return { label: "Heizen", icon: "mdi:fire" };
-      if (data.mode === "cool") return { label: "Kühlen", icon: "mdi:snowflake" };
-      if (data.mode === "dry") {
-        return { label: "Entfeuchten", icon: "mdi:water-percent" };
-      }
+    if (data.mode === "heat") return { label: "Heizen", icon: "mdi:fire" };
+    if (data.mode === "cool") return { label: "Kühlen", icon: "mdi:snowflake" };
+    if (data.mode === "dry") {
+      return { label: "Entfeuchten", icon: "mdi:water-percent" };
     }
     return {
       label: actionLabel(data.action, data.mode),
@@ -535,7 +545,11 @@ export class PlantClimateCard extends LitElement {
     return labels[mode.toLowerCase()] ?? mode;
   }
 
-  private visualMode(mode: string, action: string, plantMode?: string): string {
+  private visualMode(
+    mode: string,
+    action: string | undefined,
+    plantMode?: string
+  ): string {
     if (action === "heating") return "heat";
     if (action === "cooling") return "cool";
     if ((mode === "heat_cool" || mode === "auto") && plantMode) {

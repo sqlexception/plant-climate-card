@@ -75,6 +75,42 @@ export function resolveEffectiveMode(mode: HVACMode, plantMode?: string): HVACMo
   return mode;
 }
 
+export function temperatureDemandAction(options: {
+  mode: HVACMode;
+  plantMode?: string;
+  currentTemperature?: number;
+  targetTemperature?: number;
+  controlsBlocked?: boolean;
+  reportedAction?: string;
+}): string {
+  const {
+    mode,
+    plantMode,
+    currentTemperature,
+    targetTemperature,
+    controlsBlocked = false,
+    reportedAction
+  } = options;
+  const effectiveMode = resolveEffectiveMode(mode, plantMode);
+
+  if (effectiveMode === "off") return "off";
+  if (controlsBlocked) return "idle";
+
+  if (
+    currentTemperature !== undefined &&
+    targetTemperature !== undefined
+  ) {
+    if (effectiveMode === "cool") {
+      return targetTemperature < currentTemperature ? "cooling" : "idle";
+    }
+    if (effectiveMode === "heat") {
+      return currentTemperature < targetTemperature ? "heating" : "idle";
+    }
+  }
+
+  return reportedAction ?? "idle";
+}
+
 export function allowedTemperatureRange(options: {
   mode: HVACMode;
   plantMode?: string;

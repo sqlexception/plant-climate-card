@@ -1,6 +1,6 @@
 {
   "name": "homeassistant-plant-climate-card",
-  "version": "1.2.0",
+  "version": "1.3.0",
   "description": "Plant-aware climate card for Home Assistant",
   "type": "module",
   "main": "plant-climate-card.js",

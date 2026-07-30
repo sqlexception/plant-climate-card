@@ -63,7 +63,7 @@ Regelinstanz neben Node-RED erzeugen.
 2. In Home Assistant unter **Einstellungen → Dashboards → Ressourcen** ergänzen:
 
    ```text
-   /local/plant-climate-card/plant-climate-card.js?v=1.2.0
+   /local/plant-climate-card/plant-climate-card.js?v=1.3.0
    ```
 
    Ressourcentyp: **JavaScript-Modul**
@@ -101,13 +101,15 @@ outside_temperature_entity: sensor.eg_kuechenbereich_klimaanlage_aussentemperatu
   Raumfreigabe, worauf Node-RED die Inneneinheit passend ein- oder ausschaltet.
 - Die Raumfreigabe wird automatisch aus dem Entity-Namen erkannt. Eine
   ausdrücklich konfigurierte `room_enable_entity` hat Vorrang.
-- Bei ausgeschalteter Raum- oder Hausfreigabe sind Sollwert und Lüfter gesperrt.
+- Bei ausgeschalteter Raum- oder Hausfreigabe steht im Kreis `Gesperrt`;
+  Sollwert und Lüfter sind gesperrt.
 - Bei einer konfigurierten Störung, einem offenen Fenster oder einem laufenden
   Plant-Moduswechsel sind Sollwert und Lüfter ebenfalls gesperrt.
-- `hvac_action: idle` schaltet nichts aus. Der Kreis bleibt in der vorhandenen
-  Betriebsart und zeigt weiterhin Heizen oder Kühlen.
-- Der vergrößerte Leuchtring pulsiert bei `hvac_action: heating` beziehungsweise
-  `hvac_action: cooling` im gleichen Drei-Sekunden-Rhythmus wie die Vorlage.
+- Der Raumname wird im Kreis hell und gut lesbar angezeigt.
+- Da die Bosch-Climate-Entity kein `hvac_action` liefert, berechnet die Karte
+  den Bedarf aus Ist- und Solltemperatur. Im Kühlbetrieb pulsiert der Ring bei
+  `Soll < Ist`, im Heizbetrieb bei `Ist < Soll`.
+- Bei erreichtem Sollwert oder einer Sperre bleibt der Leuchtring ruhig.
 - Die Sollwertbedienung verwendet Pointer Events und funktioniert damit mit
   Maus, Touch und Stift.
 

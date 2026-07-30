@@ -4,7 +4,8 @@ import {
   automaticTarget,
   clampTemperature,
   coolingManualMinimum,
-  inferRoomEnableEntity
+  inferRoomEnableEntity,
+  temperatureDemandAction
 } from "../src/logic";
 import type { PlantClimateCardConfig } from "../src/types";
 
@@ -96,5 +97,91 @@ describe("Plant-Klimagrenzen", () => {
     });
     expect(clampTemperature(27.24, range)).toBe(27);
     expect(clampTemperature(27.26, range)).toBe(27.5);
+  });
+
+  it("animiert Kühlen nur bei einem Sollwert unter der Isttemperatur", () => {
+    expect(
+      temperatureDemandAction({
+        mode: "cool",
+        currentTemperature: 27,
+        targetTemperature: 25
+      })
+    ).toBe("cooling");
+    expect(
+      temperatureDemandAction({
+        mode: "cool",
+        currentTemperature: 25,
+        targetTemperature: 25
+      })
+    ).toBe("idle");
+    expect(
+      temperatureDemandAction({
+        mode: "cool",
+        currentTemperature: 24.5,
+        targetTemperature: 25
+      })
+    ).toBe("idle");
+  });
+
+  it("animiert Heizen nur bei einer Isttemperatur unter dem Sollwert", () => {
+    expect(
+      temperatureDemandAction({
+        mode: "heat",
+        currentTemperature: 20,
+        targetTemperature: 21
+      })
+    ).toBe("heating");
+    expect(
+      temperatureDemandAction({
+        mode: "heat",
+        currentTemperature: 21,
+        targetTemperature: 21
+      })
+    ).toBe("idle");
+    expect(
+      temperatureDemandAction({
+        mode: "heat",
+        currentTemperature: 22,
+        targetTemperature: 21
+      })
+    ).toBe("idle");
+  });
+
+  it("animiert bei einer Sperre auch bei Temperaturbedarf nicht", () => {
+    expect(
+      temperatureDemandAction({
+        mode: "cool",
+        currentTemperature: 28,
+        targetTemperature: 25,
+        controlsBlocked: true
+      })
+    ).toBe("idle");
+    expect(
+      temperatureDemandAction({
+        mode: "heat",
+        currentTemperature: 19,
+        targetTemperature: 21,
+        controlsBlocked: true
+      })
+    ).toBe("idle");
+  });
+
+  it("verwendet im Automatikmodus die Plant-Betriebsart", () => {
+    expect(
+      temperatureDemandAction({
+        mode: "heat_cool",
+        plantMode: "cool",
+        currentTemperature: 27,
+        targetTemperature: 25
+      })
+    ).toBe("cooling");
+    expect(
+      temperatureDemandAction({
+        mode: "heat_cool",
+        plantMode: "heat",
+        currentTemperature: 20,
+        targetTemperature: 21
+      })
+    ).toBe("heating");
   });
 });
