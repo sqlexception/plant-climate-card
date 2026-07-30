@@ -7,9 +7,9 @@ import type {
 
 export const DEFAULTS = {
   heatDefault: 21,
-  heatManualMax: 23,
+  heatManualMax: 22,
   coolAutoDefault: 25,
-  coolManualMin: 25,
+  coolManualMin: 22,
   coolOutdoorDelta: 8,
   temperatureStep: 0.5
 } as const;
