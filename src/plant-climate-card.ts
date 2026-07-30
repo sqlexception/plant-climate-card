@@ -23,7 +23,7 @@ import type {
   TemperatureRange
 } from "./types";
 
-const VERSION = "1.3.0";
+const VERSION = "1.4.0";
 
 const formLabels: Record<string, string> = {
   entity: "Climate-Entity",
@@ -328,6 +328,16 @@ export class PlantClimateCard extends LitElement {
     return html`
       <ha-card>
         <div class="card">
+          <button
+            class="more-info"
+            type="button"
+            title="Details öffnen"
+            aria-label=${`Details für ${name} öffnen`}
+            @click=${this.showMoreInfo}
+          >
+            <ha-icon icon="mdi:dots-vertical"></ha-icon>
+          </button>
+
           <plant-temperature-dial
             .name=${name}
             .currentTemperature=${currentTemperature}
@@ -482,6 +492,16 @@ export class PlantClimateCard extends LitElement {
     void this.setTemperature(event.detail.temperature);
   }
 
+  private showMoreInfo(): void {
+    this.dispatchEvent(
+      new CustomEvent("hass-more-info", {
+        detail: { entityId: this.config.entity },
+        bubbles: true,
+        composed: true
+      })
+    );
+  }
+
   private async setTemperature(temperature: number): Promise<void> {
     const climate = this.entity(this.config.entity);
     if (!climate) return;
@@ -580,6 +600,7 @@ export class PlantClimateCard extends LitElement {
     }
 
     .card {
+      position: relative;
       min-height: 280px;
       padding: 0 14px;
       font-family: var(--paper-font-body1_-_font-family, Roboto, sans-serif);
@@ -598,6 +619,38 @@ export class PlantClimateCard extends LitElement {
     button:focus-visible {
       outline: 2px solid var(--primary-color);
       outline-offset: 2px;
+    }
+
+    .more-info {
+      position: absolute;
+      z-index: 3;
+      top: 8px;
+      right: 7px;
+      width: 36px;
+      height: 36px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: transparent;
+      color: rgb(204 204 204);
+      opacity: 0.78;
+      transition:
+        background 140ms ease,
+        color 140ms ease,
+        opacity 140ms ease;
+    }
+
+    .more-info:hover,
+    .more-info:focus-visible {
+      background: rgb(255 255 255 / 6%);
+      color: rgb(238 238 238);
+      opacity: 1;
+    }
+
+    .more-info ha-icon {
+      width: 24px;
+      height: 24px;
+      --mdc-icon-size: 24px;
     }
 
     .bottom-controls {

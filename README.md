@@ -14,6 +14,8 @@ für aktuelle Home-Assistant-Versionen und Touch-Geräte neu umgesetzt.
 - runder Sollwertregler: sendet einen begrenzten Temperaturwunsch
 - Lüfter-Icons: Auto, Niedrig, Mittel, Hoch und Turbo, soweit von der
   Climate-Entity angeboten
+- Drei-Punkte-Schaltfläche: öffnet die normale Home-Assistant-Detailansicht
+  der Climate-Entity mit Verlauf und Aktionen
 
 Die Betriebsart wird nur angezeigt. Die Karte sendet niemals
 `climate.set_hvac_mode`.
@@ -63,7 +65,7 @@ Regelinstanz neben Node-RED erzeugen.
 2. In Home Assistant unter **Einstellungen → Dashboards → Ressourcen** ergänzen:
 
    ```text
-   /local/plant-climate-card/plant-climate-card.js?v=1.3.0
+   /local/plant-climate-card/plant-climate-card.js?v=1.4.0
    ```
 
    Ressourcentyp: **JavaScript-Modul**
@@ -99,6 +101,9 @@ outside_temperature_entity: sensor.eg_kuechenbereich_klimaanlage_aussentemperatu
 
 - Das Power-Icon ist der manuelle Ein-/Aus-Schalter des Raums. Es setzt die
   Raumfreigabe, worauf Node-RED die Inneneinheit passend ein- oder ausschaltet.
+- Die drei Punkte oben rechts öffnen Home Assistants normale Detailansicht der
+  jeweiligen Climate-Entity. Dort stehen Verlauf, Aktionen und das
+  Home-Assistant-Menü zur Verfügung.
 - Die Raumfreigabe wird automatisch aus dem Entity-Namen erkannt. Eine
   ausdrücklich konfigurierte `room_enable_entity` hat Vorrang.
 - Bei ausgeschalteter Raum- oder Hausfreigabe steht im Kreis `Gesperrt`;
