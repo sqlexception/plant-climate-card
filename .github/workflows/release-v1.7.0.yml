@@ -1,0 +1,79 @@
+name: Release v1.7.0
+
+on:
+  pull_request:
+    branches:
+      - main
+    types:
+      - opened
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    if: github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'release-v1.7.0'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout release branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Bump version to 1.7.0
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          replacements = {
+              "package.json": [('"version": "1.6.0"', '"version": "1.7.0"')],
+              "package-lock.json": [('"version": "1.6.0"', '"version": "1.7.0"')],
+              "src/plant-climate-card.ts": [('const VERSION = "1.6.0";', 'const VERSION = "1.7.0";')],
+              "README.md": [('plant-climate-card.js?v=1.6.0', 'plant-climate-card.js?v=1.7.0')],
+          }
+
+          for filename, pairs in replacements.items():
+              path = Path(filename)
+              text = path.read_text()
+              for old, new in pairs:
+                  text = text.replace(old, new)
+              path.write_text(text)
+          PY
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Verify and build
+        run: npm run verify
+
+      - name: Remove temporary release files
+        run: |
+          rm -f .release-v1.7.0-trigger
+          rm -f .github/workflows/release-v1.7.0.yml
+
+      - name: Commit release files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Release v1.7.0"
+          git push origin HEAD:${{ github.event.pull_request.head.ref }}
+
+      - name: Create GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          git tag -a v1.7.0 -m "Plant Climate Card v1.7.0"
+          git push origin v1.7.0
+          gh release create v1.7.0 plant-climate-card.js \
+            --verify-tag \
+            --title "Plant Climate Card v1.7.0" \
+            --notes "HACS release with the latest climate card improvements:\n\n- temperature remains adjustable while the room is off\n- integer temperature display and 1 K target steps\n- fixed 18–30 °C visual dial scale\n- heat limit 22 °C and cooling minimum 23 °C\n- target value shown only while dragging\n- simplified card editor without global and Node-RED/plant configuration fields"
