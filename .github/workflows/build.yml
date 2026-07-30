@@ -24,6 +24,53 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Apply fixed 18-30 dial scale
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+
+          path = Path("src/plant-temperature-dial.ts")
+          text = path.read_text()
+
+          marker = 'import type { HVACMode, TemperatureRange } from "./types";\n\n'
+          constants = (
+              'const VISUAL_MIN_TEMPERATURE = 18;\n'
+              'const VISUAL_MAX_TEMPERATURE = 30;\n\n'
+          )
+          if constants not in text:
+              text = text.replace(marker, marker + constants, 1)
+
+          text = text.replace(
+              '  @property({ attribute: false }) range: TemperatureRange = {\n    min: 16,\n    max: 30,\n    step: 1,',
+              '  @property({ attribute: false }) range: TemperatureRange = {\n    min: 18,\n    max: 30,\n    step: 1,',
+              1,
+          )
+
+          text = text.replace(
+              '''    const displayRange = this.displayRange();\n    const value =\n      displayRange.min + ratio * (displayRange.max - displayRange.min);\n    this.selectedTemperature = this.clampDisplayTemperature(value);''',
+              '''    const visualRange = this.visualRange();\n    const value =\n      visualRange.min + ratio * (visualRange.max - visualRange.min);\n    this.selectedTemperature = this.clampDisplayTemperature(value);''',
+              1,
+          )
+
+          old_display = '''  private displayRange(): { min: number; max: number } {\n    const min = Math.ceil(this.range.min);\n    const max = Math.floor(this.range.max);\n\n    if (min <= max) {\n      return { min, max };\n    }\n\n    const fallback = Math.round((this.range.min + this.range.max) / 2);\n    return { min: fallback, max: fallback };\n  }'''
+          new_display = '''  private visualRange(): { min: number; max: number } {\n    return {\n      min: VISUAL_MIN_TEMPERATURE,\n      max: VISUAL_MAX_TEMPERATURE\n    };\n  }\n\n  private displayRange(): { min: number; max: number } {\n    const visualRange = this.visualRange();\n    const min = Math.max(visualRange.min, Math.ceil(this.range.min));\n    const max = Math.min(visualRange.max, Math.floor(this.range.max));\n\n    if (min <= max) {\n      return { min, max };\n    }\n\n    const fallback = Math.min(\n      visualRange.max,\n      Math.max(\n        visualRange.min,\n        Math.round((this.range.min + this.range.max) / 2)\n      )\n    );\n    return { min: fallback, max: fallback };\n  }'''
+          text = text.replace(old_display, new_display, 1)
+
+          old_angle = '''  private temperatureToAngle(temperature: number): number {\n    const range = this.displayRange();\n    if (range.max <= range.min) return 150;\n    const ratio =\n      (this.clampDisplayTemperature(temperature) - range.min) /\n      (range.max - range.min);\n    return 150 + ratio * 255;\n  }'''
+          new_angle = '''  private temperatureToAngle(temperature: number): number {\n    const range = this.visualRange();\n    const visualTemperature = Math.min(\n      range.max,\n      Math.max(range.min, Math.round(temperature))\n    );\n    const ratio =\n      (visualTemperature - range.min) / (range.max - range.min);\n    return 150 + ratio * 255;\n  }'''
+          text = text.replace(old_angle, new_angle, 1)
+
+          path.write_text(text)
+
+          readme_path = Path("README.md")
+          readme = readme_path.read_text()
+          anchor = '- Die Sollwertbedienung verwendet Pointer Events und funktioniert damit mit\n  Maus, Touch und Stift.\n'
+          addition = '- Die Reglerposition verwendet unabhängig vom Betriebsmodus immer dieselbe feste\n  visuelle Skala von 18 bis 30 °C. Heiz- und Kühlgrenzen begrenzen nur den\n  auswählbaren Sollwert, nicht die Position der Temperaturskala.\n'
+          if addition not in readme:
+              readme = readme.replace(anchor, anchor + addition, 1)
+          readme_path.write_text(readme)
+          PY
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -42,15 +89,15 @@ jobs:
       - name: Build bundle
         run: npm run build
 
-      - name: Commit generated bundle
+      - name: Commit fixed-scale source and bundle
         run: |
-          git add plant-climate-card.js plant-climate-card.js.map
+          git add src/plant-temperature-dial.ts README.md plant-climate-card.js plant-climate-card.js.map
           if git diff --cached --quiet; then
-            echo "Bundle is already up to date."
+            echo "Fixed scale is already up to date."
             exit 0
           fi
 
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git commit -m "build: update generated frontend bundle"
+          git commit -m "Use fixed 18-30 temperature dial scale"
           git push
