@@ -235,7 +235,7 @@ export function modeIcon(mode: string): string {
     dry: "mdi:water-percent",
     fan_only: "mdi:fan"
   };
-  return labels[mode] ?? "mdi:thermostat";
+  return icons[mode] ?? "mdi:thermostat";
 }
 
 export function actionIcon(action: string, mode: string): string {
