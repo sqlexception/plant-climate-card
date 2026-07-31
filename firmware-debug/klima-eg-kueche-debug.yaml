@@ -1,0 +1,7 @@
+substitutions:
+  device_name: "klima-eg-kueche"
+  friendly_name: "EG Küche Klimaanlage Diagnose"
+  fallback_ssid: "Klima-EG-Kueche-Debug"
+
+packages:
+  basis: !include slwf_bosch_midea_debug_base.yaml
