@@ -108,10 +108,8 @@ export class PlantTemperatureDial extends LitElement {
               ? nothing
               : html`
                   <div class="pointer">
-                    ${this.dragging
-                      ? html`<div class="pointer-value">${this.formatTemperature(target)}</div>`
-                      : nothing}
                     <div class="pointer-dot"></div>
+                    <div class="pointer-value">${this.formatTemperature(target)}</div>
                   </div>
                 `}
           </div>
@@ -502,6 +500,7 @@ export class PlantTemperatureDial extends LitElement {
       margin: 11px 3px 0 auto;
       border-radius: 50%;
       background: rgb(154 40 40);
+      pointer-events: auto;
       transition: width 150ms ease, height 150ms ease, box-shadow 150ms ease;
     }
 
@@ -517,11 +516,21 @@ export class PlantTemperatureDial extends LitElement {
       position: absolute;
       right: 18px;
       top: -3px;
+      opacity: 0;
+      visibility: hidden;
       font-family: Roboto, sans-serif;
       font-size: 10px;
       font-variant-numeric: tabular-nums;
       transform: rotate(80deg);
       transform-origin: center;
+      transition: opacity 120ms ease;
+      pointer-events: none;
+    }
+
+    .pointer-dot:hover + .pointer-value,
+    .dragging .pointer-value {
+      opacity: 1;
+      visibility: visible;
     }
 
     .dragging .pointer-value {
