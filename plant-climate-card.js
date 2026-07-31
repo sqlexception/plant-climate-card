@@ -48,8 +48,8 @@ function t(t,e,i,r){var n,o=arguments.length,s=o<3?e:null===r?r=Object.getOwnPro
           >
             ${"fan_only"===this.mode||void 0===t?W:F`
                   <div class="pointer">
-                    ${this.dragging?F`<div class="pointer-value">${this.formatTemperature(t)}</div>`:W}
                     <div class="pointer-dot"></div>
+                    <div class="pointer-value">${this.formatTemperature(t)}</div>
                   </div>
                 `}
           </div>
@@ -294,6 +294,7 @@ function t(t,e,i,r){var n,o=arguments.length,s=o<3?e:null===r?r=Object.getOwnPro
       margin: 11px 3px 0 auto;
       border-radius: 50%;
       background: rgb(154 40 40);
+      pointer-events: auto;
       transition: width 150ms ease, height 150ms ease, box-shadow 150ms ease;
     }
 
@@ -309,11 +310,21 @@ function t(t,e,i,r){var n,o=arguments.length,s=o<3?e:null===r?r=Object.getOwnPro
       position: absolute;
       right: 18px;
       top: -3px;
+      opacity: 0;
+      visibility: hidden;
       font-family: Roboto, sans-serif;
       font-size: 10px;
       font-variant-numeric: tabular-nums;
       transform: rotate(80deg);
       transform-origin: center;
+      transition: opacity 120ms ease;
+      pointer-events: none;
+    }
+
+    .pointer-dot:hover + .pointer-value,
+    .dragging .pointer-value {
+      opacity: 1;
+      visibility: visible;
     }
 
     .dragging .pointer-value {
@@ -608,5 +619,5 @@ function t(t,e,i,r){var n,o=arguments.length,s=o<3?e:null===r?r=Object.getOwnPro
       color: var(--error-color, #db4437);
     }
 
-  `}};t([pt({attribute:!1})],Tt.prototype,"hass",void 0),t([ut()],Tt.prototype,"config",void 0),t([ut()],Tt.prototype,"pendingTemperature",void 0),t([ut()],Tt.prototype,"serviceError",void 0),Tt=t([ct("plant-climate-card")],Tt),window.customCards=window.customCards??[],window.customCards.push({type:"plant-climate-card",name:"Plant Climate Card",description:"Plant-bewusste Klimakarte mit Node-RED-Freigaben und Bosch-Grenzwerten",preview:!0,getEntitySuggestion:(t,e)=>e.startsWith("climate.")?{config:{type:"custom:plant-climate-card",entity:e}}:null}),console.info("%c PLANT-CLIMATE-CARD %c 1.7.0 ","color:white;background:#111;padding:3px 5px;font-weight:700","color:#07b9ff;background:#111;padding:3px 5px");export{Tt as PlantClimateCard};
+  `}};t([pt({attribute:!1})],Tt.prototype,"hass",void 0),t([ut()],Tt.prototype,"config",void 0),t([ut()],Tt.prototype,"pendingTemperature",void 0),t([ut()],Tt.prototype,"serviceError",void 0),Tt=t([ct("plant-climate-card")],Tt),window.customCards=window.customCards??[],window.customCards.push({type:"plant-climate-card",name:"Plant Climate Card",description:"Plant-bewusste Klimakarte mit Node-RED-Freigaben und Bosch-Grenzwerten",preview:!0,getEntitySuggestion:(t,e)=>e.startsWith("climate.")?{config:{type:"custom:plant-climate-card",entity:e}}:null}),console.info("%c PLANT-CLIMATE-CARD %c 1.10.0 ","color:white;background:#111;padding:3px 5px;font-weight:700","color:#07b9ff;background:#111;padding:3px 5px");export{Tt as PlantClimateCard};
 //# sourceMappingURL=plant-climate-card.js.map
