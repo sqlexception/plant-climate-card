@@ -1,0 +1,4 @@
+Built with: Version: 2024.4.2
+Target: SMLIGHT SLWF-01Pro R2.1 / ESP8266 esp12e
+UART: GPIO12 TX, GPIO14 RX, 9600 baud
+Purpose: Bosch Climate 3000iU / Midea raw RX/TX diagnostics

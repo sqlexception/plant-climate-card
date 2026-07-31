@@ -1,0 +1,4 @@
+160a5f3d7e400509918d6b2d7bc4f95652443230e819843e91c739b0daef28d1  klima-eg-kinderzimmer-bosch-midea-debug-ota.bin
+b85431d5597e5b98ad203e24fc6fe28e1f8f40b110fa2920930f4fc3f0660656  klima-eg-kueche-bosch-midea-debug-ota.bin
+c08c15add78522d59ce55063ab8206922b4c1a2973dadc5adbffb7ee3b012261  klima-eg-schlafzimmer-bosch-midea-debug-ota.bin
+412bf8b3dd1ef8df95c4db7acfdfbb6635e642c513af31423b7c49731d39165b  klima-og-kinderzimmer-01-bosch-midea-debug-ota.bin

@@ -1,0 +1,163 @@
+esphome:
+  name: "${device_name}"
+  friendly_name: "${friendly_name}"
+  name_add_mac_suffix: false
+  project:
+    name: "local.bosch-climate-3000iu-debug"
+    version: "1.1.0-debug"
+
+# SMLIGHT SLWF-01Pro Hardware-Revision 2.1
+esp8266:
+  board: esp12e
+
+# Bei OTA bleiben die bereits gespeicherten WLAN-Zugangsdaten erhalten.
+wifi:
+  reboot_timeout: 15min
+  ap:
+    ssid: "${fallback_ssid}"
+    password: "slwf01pro"
+    ap_timeout: 60s
+
+captive_portal:
+
+# UART-Rohdaten und Midea-Decoder sichtbar machen.
+# Serielle Logger-Ausgabe bleibt abgeschaltet, weil GPIO1/GPIO3 nicht benutzt werden sollen.
+logger:
+  level: VERY_VERBOSE
+  baud_rate: 0
+  logs:
+    api: WARN
+    api.connection: WARN
+    captive_portal: WARN
+    component: WARN
+    mdns: WARN
+    sensor: WARN
+    web_server: WARN
+    wifi: INFO
+    uart_debug: DEBUG
+    midea: VERY_VERBOSE
+
+api:
+  reboot_timeout: 0s
+
+ota:
+
+# ESPHome 2024.4.2 kann Logger-Ereignisse direkt im Webserver anzeigen.
+web_server:
+  port: 80
+  version: 2
+  log: true
+
+uart:
+  id: uart_klimaanlage
+  tx_pin: GPIO12
+  rx_pin: GPIO14
+  baud_rate: 9600
+  rx_buffer_size: 512
+  debug:
+    direction: BOTH
+    dummy_receiver: false
+    after:
+      bytes: 150
+      timeout: 50ms
+
+climate:
+  - platform: midea
+    id: bosch_klima
+    name: "Klimagerät Diagnose"
+    uart_id: uart_klimaanlage
+    period: 1s
+    timeout: 2s
+    num_attempts: 3
+
+    # Absichtlich aktiv: dadurch fragt MideaUART die Geräte-Capabilities ab.
+    autoconf: true
+    beeper: false
+
+    visual:
+      min_temperature: 17 °C
+      max_temperature: 30 °C
+      temperature_step: 0.5 °C
+
+    # Bewährte Bosch-Grundfunktionen. Keine zusätzlichen experimentellen Steuerbefehle.
+    supported_modes:
+      - HEAT_COOL
+      - COOL
+      - HEAT
+      - DRY
+      - FAN_ONLY
+    custom_fan_modes:
+      - TURBO
+    supported_presets:
+      - SLEEP
+    custom_presets:
+      - FREEZE_PROTECTION
+    supported_swing_modes:
+      - VERTICAL
+
+    # Für die Diagnose bewusst wieder sichtbar. Auch 0-W/0-%-Antworten sind relevante Rohdaten.
+    outdoor_temperature:
+      name: "Außentemperatur Klimaanlage"
+      accuracy_decimals: 1
+    power_usage:
+      name: "Leistungswert Rohdaten"
+      accuracy_decimals: 1
+    humidity_setpoint:
+      name: "Feuchtewert Rohdaten"
+      accuracy_decimals: 1
+
+button:
+  - platform: restart
+    name: "SLWF neu starten"
+    entity_category: diagnostic
+
+binary_sensor:
+  - platform: status
+    name: "API-Verbindung"
+    entity_category: diagnostic
+
+debug:
+  update_interval: 30s
+
+sensor:
+  - platform: wifi_signal
+    name: "WLAN-Signal"
+    update_interval: 30s
+    entity_category: diagnostic
+
+  - platform: uptime
+    id: uptime_seconds
+    name: "Laufzeit Sekunden"
+    internal: true
+
+  - platform: debug
+    free:
+      name: "Freier Heap"
+    block:
+      name: "Größter freier Heap-Block"
+    fragmentation:
+      name: "Heap-Fragmentierung"
+    loop_time:
+      name: "Maximale Schleifenzeit"
+
+text_sensor:
+  - platform: version
+    name: "ESPHome-Version"
+    entity_category: diagnostic
+
+  - platform: wifi_info
+    ip_address:
+      name: "IP-Adresse"
+      entity_category: diagnostic
+    ssid:
+      name: "WLAN"
+      entity_category: diagnostic
+    mac_address:
+      name: "MAC-Adresse"
+      entity_category: diagnostic
+
+  - platform: debug
+    device:
+      name: "Geräteinformationen"
+    reset_reason:
+      name: "Letzter Neustartgrund"
