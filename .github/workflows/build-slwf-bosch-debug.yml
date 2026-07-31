@@ -4,15 +4,10 @@ on:
   push:
     branches:
       - "build/slwf-bosch-debug-20260731"
-  pull_request:
-    branches:
-      - main
-      - "build/slwf-bosch-debug-20260731"
-    paths:
-      - "firmware-debug/**"
-      - ".github/workflows/build-slwf-bosch-debug.yml"
-      - "firmware-debug-build-trigger.txt"
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -22,6 +17,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: "build/slwf-bosch-debug-20260731"
 
       - name: Set up Python 3.11
         uses: actions/setup-python@v5
@@ -53,6 +50,7 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          rm -rf artifact
           mkdir -p artifact
           devices=(
             klima-eg-kueche
@@ -87,3 +85,20 @@ jobs:
           path: artifact/
           if-no-files-found: error
           retention-days: 7
+
+      - name: Persist binaries on temporary build branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          rm -rf firmware-debug/artifacts
+          mkdir -p firmware-debug/artifacts
+          cp artifact/* firmware-debug/artifacts/
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add firmware-debug/artifacts
+          if git diff --cached --quiet; then
+            echo "No artifact changes"
+            exit 0
+          fi
+          git commit -m "Add generated SLWF Bosch debug OTA binaries [skip ci]"
+          git push origin HEAD:build/slwf-bosch-debug-20260731
