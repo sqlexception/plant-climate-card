@@ -1,0 +1,3 @@
+install=success
+compile=failure
+collect=skipped
