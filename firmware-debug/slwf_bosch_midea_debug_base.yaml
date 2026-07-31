@@ -23,7 +23,7 @@ captive_portal:
 # UART-Rohdaten und Midea-Decoder sichtbar machen.
 # Serielle Logger-Ausgabe bleibt abgeschaltet, weil GPIO1/GPIO3 nicht benutzt werden sollen.
 logger:
-  level: DEBUG
+  level: VERY_VERBOSE
   baud_rate: 0
   logs:
     api: WARN
