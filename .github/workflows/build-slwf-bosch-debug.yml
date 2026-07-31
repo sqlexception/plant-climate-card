@@ -43,12 +43,12 @@ jobs:
         shell: bash
         run: |
           set -o pipefail
-          : > firmware-debug/build-output.log
+          : > firmware-debug/build-output.txt
           {
             python -m pip install --upgrade pip
             python -m pip install "esphome==2024.4.2"
             esphome version
-          } 2>&1 | tee -a firmware-debug/build-output.log
+          } 2>&1 | tee -a firmware-debug/build-output.txt
 
       - name: Compile diagnostic firmware
         id: compile
@@ -64,8 +64,8 @@ jobs:
             firmware-debug/klima-og-kinderzimmer-01-debug.yaml
           )
           for config in "${configs[@]}"; do
-            echo "===== BUILD $config =====" | tee -a firmware-debug/build-output.log
-            esphome compile "$config" 2>&1 | tee -a firmware-debug/build-output.log
+            echo "===== BUILD $config =====" | tee -a firmware-debug/build-output.txt
+            esphome compile "$config" 2>&1 | tee -a firmware-debug/build-output.txt
             rc=${PIPESTATUS[0]}
             if [ "$rc" -ne 0 ]; then
               exit "$rc"
@@ -90,14 +90,14 @@ jobs:
           for dev in "${devices[@]}"; do
             bin="$(find . -type f -path "*/.pioenvs/${dev}/firmware.bin" -print -quit)"
             if [ -z "$bin" ]; then
-              echo "firmware.bin for $dev not found" | tee -a firmware-debug/build-output.log
-              find . -type f -name firmware.bin -print | tee -a firmware-debug/build-output.log
+              echo "firmware.bin for $dev not found" | tee -a firmware-debug/build-output.txt
+              find . -type f -name firmware.bin -print | tee -a firmware-debug/build-output.txt
               exit 1
             fi
             cp "$bin" "artifact/${dev}-bosch-midea-debug-ota.bin"
           done
           cp firmware-debug/*.yaml artifact/
-          cp firmware-debug/build-output.log artifact/
+          cp firmware-debug/build-output.txt artifact/
           (cd artifact && sha256sum *.bin > SHA256SUMS.txt)
           {
             echo "Built with: $(esphome version)"
@@ -105,8 +105,8 @@ jobs:
             echo "UART: GPIO12 TX, GPIO14 RX, 9600 baud"
             echo "Purpose: Bosch Climate 3000iU / Midea raw RX/TX diagnostics"
           } > artifact/BUILDINFO.txt
-          ls -lh artifact | tee -a firmware-debug/build-output.log
-          cat artifact/SHA256SUMS.txt | tee -a firmware-debug/build-output.log
+          ls -lh artifact | tee -a firmware-debug/build-output.txt
+          cat artifact/SHA256SUMS.txt | tee -a firmware-debug/build-output.txt
 
       - name: Upload firmware artifact
         if: steps.collect.outcome == 'success'
@@ -126,7 +126,7 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           mkdir -p firmware-debug/artifacts
-          cp firmware-debug/build-output.log firmware-debug/artifacts/build-output.log || true
+          cp firmware-debug/build-output.txt firmware-debug/artifacts/build-output.txt || true
 
           if [ "${{ steps.collect.outcome }}" = "success" ]; then
             cp artifact/* firmware-debug/artifacts/
@@ -139,7 +139,7 @@ jobs:
               > firmware-debug/artifacts/BUILD_FAILED.txt
           fi
 
-          git add firmware-debug/artifacts
+          git add -f firmware-debug/artifacts
           if git diff --cached --quiet; then
             echo "No build-result changes"
           else
