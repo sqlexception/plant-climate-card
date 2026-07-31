@@ -1,0 +1,7 @@
+substitutions:
+  device_name: "klima-eg-kinderzimmer"
+  friendly_name: "EG Kinderzimmer Klimaanlage Diagnose"
+  fallback_ssid: "Klima-EG-Kinderzimmer-Debug"
+
+packages:
+  basis: !include slwf_bosch_midea_debug_base.yaml
