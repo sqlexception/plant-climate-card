@@ -1,0 +1,81 @@
+name: Build SLWF Bosch diagnostic firmware
+
+on:
+  push:
+    branches:
+      - "build/slwf-bosch-debug-20260731"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install ESPHome 2024.4.2
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install "esphome==2024.4.2"
+          esphome version
+
+      - name: Compile diagnostic firmware
+        shell: bash
+        run: |
+          set -euo pipefail
+          configs=(
+            firmware-debug/klima-eg-kueche-debug.yaml
+            firmware-debug/klima-eg-schlafzimmer-debug.yaml
+            firmware-debug/klima-eg-kinderzimmer-debug.yaml
+            firmware-debug/klima-og-kinderzimmer-01-debug.yaml
+          )
+          for config in "${configs[@]}"; do
+            echo "===== BUILD $config ====="
+            esphome compile "$config"
+          done
+
+      - name: Collect OTA binaries
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifact
+          devices=(
+            klima-eg-kueche
+            klima-eg-schlafzimmer
+            klima-eg-kinderzimmer
+            klima-og-kinderzimmer-01
+          )
+          for dev in "${devices[@]}"; do
+            bin="$(find . -type f -path "*/.pioenvs/${dev}/firmware.bin" -print -quit)"
+            if [ -z "$bin" ]; then
+              echo "firmware.bin for $dev not found" >&2
+              find . -type f -name firmware.bin -print
+              exit 1
+            fi
+            cp "$bin" "artifact/${dev}-bosch-midea-debug-ota.bin"
+          done
+          cp firmware-debug/*.yaml artifact/
+          (cd artifact && sha256sum *.bin > SHA256SUMS.txt)
+          {
+            echo "Built with: $(esphome version)"
+            echo "Target: SMLIGHT SLWF-01Pro R2.1 / ESP8266 esp12e"
+            echo "UART: GPIO12 TX, GPIO14 RX, 9600 baud"
+            echo "Purpose: Bosch Climate 3000iU / Midea raw RX/TX diagnostics"
+          } > artifact/BUILDINFO.txt
+          ls -lh artifact
+          cat artifact/SHA256SUMS.txt
+
+      - name: Upload firmware artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: slwf-bosch-midea-debug-ota
+          path: artifact/
+          if-no-files-found: error
+          retention-days: 7
