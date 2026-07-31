@@ -1,0 +1,237 @@
+Requirement already satisfied: pip in /opt/hostedtoolcache/Python/3.11.15/x64/lib/python3.11/site-packages (26.1.2)
+Collecting pip
+  Downloading pip-26.2-py3-none-any.whl.metadata (4.6 kB)
+Downloading pip-26.2-py3-none-any.whl (1.8 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1.8/1.8 MB 9.9 MB/s  0:00:00
+Installing collected packages: pip
+  Attempting uninstall: pip
+    Found existing installation: pip 26.1.2
+    Uninstalling pip-26.1.2:
+      Successfully uninstalled pip-26.1.2
+Successfully installed pip-26.2
+Collecting esphome==2024.4.2
+  Downloading esphome-2024.4.2-py2.py3-none-any.whl.metadata (2.4 kB)
+Collecting cryptography==42.0.2 (from esphome==2024.4.2)
+  Downloading cryptography-42.0.2-cp39-abi3-manylinux_2_28_x86_64.whl.metadata (5.3 kB)
+Collecting voluptuous==0.14.2 (from esphome==2024.4.2)
+  Downloading voluptuous-0.14.2-py3-none-any.whl.metadata (20 kB)
+Collecting PyYAML==6.0.1 (from esphome==2024.4.2)
+  Downloading PyYAML-6.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.1 kB)
+Collecting paho-mqtt==1.6.1 (from esphome==2024.4.2)
+  Downloading paho-mqtt-1.6.1.tar.gz (99 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting colorama==0.4.6 (from esphome==2024.4.2)
+  Downloading colorama-0.4.6-py2.py3-none-any.whl.metadata (17 kB)
+Collecting icmplib==3.0.4 (from esphome==2024.4.2)
+  Downloading icmplib-3.0.4-py3-none-any.whl.metadata (19 kB)
+Collecting tornado==6.4 (from esphome==2024.4.2)
+  Downloading tornado-6.4-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (2.5 kB)
+Collecting tzlocal==5.2 (from esphome==2024.4.2)
+  Downloading tzlocal-5.2-py3-none-any.whl.metadata (7.8 kB)
+Collecting tzdata>=2021.1 (from esphome==2024.4.2)
+  Downloading tzdata-2026.3-py2.py3-none-any.whl.metadata (1.4 kB)
+Collecting pyserial==3.5 (from esphome==2024.4.2)
+  Downloading pyserial-3.5-py2.py3-none-any.whl.metadata (1.6 kB)
+Collecting platformio==6.1.13 (from esphome==2024.4.2)
+  Downloading platformio-6.1.13.tar.gz (237 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting esptool==4.7.0 (from esphome==2024.4.2)
+  Downloading esptool-4.7.0.tar.gz (285 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting click==8.1.7 (from esphome==2024.4.2)
+  Downloading click-8.1.7-py3-none-any.whl.metadata (3.0 kB)
+Collecting esphome-dashboard==20240412.0 (from esphome==2024.4.2)
+  Downloading esphome_dashboard-20240412.0-py3-none-any.whl.metadata (235 bytes)
+Collecting aioesphomeapi==23.2.0 (from esphome==2024.4.2)
+  Downloading aioesphomeapi-23.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (4.9 kB)
+Collecting zeroconf==0.131.0 (from esphome==2024.4.2)
+  Downloading zeroconf-0.131.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (6.1 kB)
+Collecting python-magic==0.4.27 (from esphome==2024.4.2)
+  Downloading python_magic-0.4.27-py2.py3-none-any.whl.metadata (5.8 kB)
+Collecting ruamel.yaml==0.18.6 (from esphome==2024.4.2)
+  Downloading ruamel.yaml-0.18.6-py3-none-any.whl.metadata (23 kB)
+Collecting kconfiglib==13.7.1 (from esphome==2024.4.2)
+  Downloading kconfiglib-13.7.1-py2.py3-none-any.whl.metadata (39 kB)
+Collecting pyparsing>=3.0 (from esphome==2024.4.2)
+  Downloading pyparsing-3.3.2-py3-none-any.whl.metadata (5.8 kB)
+Collecting argcomplete>=2.0.0 (from esphome==2024.4.2)
+  Downloading argcomplete-3.7.0-py3-none-any.whl.metadata (16 kB)
+Collecting aiohappyeyeballs>=2.3.0 (from aioesphomeapi==23.2.0->esphome==2024.4.2)
+  Downloading aiohappyeyeballs-2.7.1-py3-none-any.whl.metadata (5.9 kB)
+Collecting async-interrupt>=1.1.1 (from aioesphomeapi==23.2.0->esphome==2024.4.2)
+  Downloading async_interrupt-1.2.2-py3-none-any.whl.metadata (4.9 kB)
+Collecting protobuf>=3.19.0 (from aioesphomeapi==23.2.0->esphome==2024.4.2)
+  Downloading protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl.metadata (595 bytes)
+Collecting chacha20poly1305-reuseable>=0.12.1 (from aioesphomeapi==23.2.0->esphome==2024.4.2)
+  Downloading chacha20poly1305_reuseable-0.13.2-py3-none-any.whl.metadata (5.3 kB)
+Collecting noiseprotocol<1.0,>=0.3.1 (from aioesphomeapi==23.2.0->esphome==2024.4.2)
+  Downloading noiseprotocol-0.3.1-py3-none-any.whl.metadata (1.0 kB)
+Collecting ifaddr>=0.1.7 (from zeroconf==0.131.0->esphome==2024.4.2)
+  Downloading ifaddr-0.2.0-py3-none-any.whl.metadata (4.9 kB)
+Collecting cffi>=1.12 (from cryptography==42.0.2->esphome==2024.4.2)
+  Downloading cffi-2.1.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl.metadata (2.5 kB)
+Collecting bitstring>=3.1.6 (from esptool==4.7.0->esphome==2024.4.2)
+  Downloading bitstring-4.4.0-py3-none-any.whl.metadata (5.6 kB)
+Collecting ecdsa>=0.16.0 (from esptool==4.7.0->esphome==2024.4.2)
+  Downloading ecdsa-0.19.2-py2.py3-none-any.whl.metadata (29 kB)
+Collecting reedsolo<1.8,>=1.5.3 (from esptool==4.7.0->esphome==2024.4.2)
+  Downloading reedsolo-1.7.0-py3-none-any.whl.metadata (23 kB)
+Collecting intelhex (from esptool==4.7.0->esphome==2024.4.2)
+  Downloading intelhex-2.3.0-py2.py3-none-any.whl.metadata (2.7 kB)
+Collecting bottle==0.12.* (from platformio==6.1.13->esphome==2024.4.2)
+  Downloading bottle-0.12.25-py3-none-any.whl.metadata (1.8 kB)
+Collecting marshmallow==3.* (from platformio==6.1.13->esphome==2024.4.2)
+  Downloading marshmallow-3.26.2-py3-none-any.whl.metadata (7.3 kB)
+Collecting pyelftools==0.30 (from platformio==6.1.13->esphome==2024.4.2)
+  Downloading pyelftools-0.30-py2.py3-none-any.whl.metadata (381 bytes)
+Collecting requests==2.* (from platformio==6.1.13->esphome==2024.4.2)
+  Downloading requests-2.34.2-py3-none-any.whl.metadata (4.8 kB)
+Collecting semantic_version==2.10.* (from platformio==6.1.13->esphome==2024.4.2)
+  Downloading semantic_version-2.10.0-py2.py3-none-any.whl.metadata (9.7 kB)
+Collecting tabulate==0.* (from platformio==6.1.13->esphome==2024.4.2)
+  Downloading tabulate-0.10.0-py3-none-any.whl.metadata (40 kB)
+Collecting ajsonrpc==1.2.* (from platformio==6.1.13->esphome==2024.4.2)
+  Downloading ajsonrpc-1.2.0-py3-none-any.whl.metadata (6.9 kB)
+Collecting starlette<0.36,>=0.19 (from platformio==6.1.13->esphome==2024.4.2)
+  Downloading starlette-0.35.1-py3-none-any.whl.metadata (5.8 kB)
+Collecting uvicorn<0.26,>=0.16 (from platformio==6.1.13->esphome==2024.4.2)
+  Downloading uvicorn-0.25.0-py3-none-any.whl.metadata (6.4 kB)
+Collecting wsproto==1.* (from platformio==6.1.13->esphome==2024.4.2)
+  Downloading wsproto-1.3.2-py3-none-any.whl.metadata (5.2 kB)
+Collecting ruamel.yaml.clib>=0.2.7 (from ruamel.yaml==0.18.6->esphome==2024.4.2)
+  Downloading ruamel_yaml_clib-0.2.15-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (3.5 kB)
+Collecting packaging>=17.0 (from marshmallow==3.*->platformio==6.1.13->esphome==2024.4.2)
+  Downloading packaging-26.2-py3-none-any.whl.metadata (3.5 kB)
+Collecting charset_normalizer<4,>=2 (from requests==2.*->platformio==6.1.13->esphome==2024.4.2)
+  Downloading charset_normalizer-3.4.9-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (41 kB)
+Collecting idna<4,>=2.5 (from requests==2.*->platformio==6.1.13->esphome==2024.4.2)
+  Downloading idna-3.18-py3-none-any.whl.metadata (6.1 kB)
+Collecting urllib3<3,>=1.26 (from requests==2.*->platformio==6.1.13->esphome==2024.4.2)
+  Downloading urllib3-2.7.0-py3-none-any.whl.metadata (6.9 kB)
+Collecting certifi>=2023.5.7 (from requests==2.*->platformio==6.1.13->esphome==2024.4.2)
+  Downloading certifi-2026.7.22-py3-none-any.whl.metadata (2.5 kB)
+Collecting anyio<5,>=3.4.0 (from starlette<0.36,>=0.19->platformio==6.1.13->esphome==2024.4.2)
+  Downloading anyio-4.14.2-py3-none-any.whl.metadata (4.6 kB)
+Collecting typing_extensions>=4.5 (from anyio<5,>=3.4.0->starlette<0.36,>=0.19->platformio==6.1.13->esphome==2024.4.2)
+  Downloading typing_extensions-4.16.0-py3-none-any.whl.metadata (3.3 kB)
+Collecting h11>=0.8 (from uvicorn<0.26,>=0.16->platformio==6.1.13->esphome==2024.4.2)
+  Downloading h11-0.16.0-py3-none-any.whl.metadata (8.3 kB)
+Collecting bitarray<4.0,>=3.0.0 (from bitstring>=3.1.6->esptool==4.7.0->esphome==2024.4.2)
+  Downloading bitarray-3.10.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl.metadata (36 kB)
+Collecting tibs<0.6,>=0.5.6 (from bitstring>=3.1.6->esptool==4.7.0->esphome==2024.4.2)
+  Downloading tibs-0.5.7-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl.metadata (8.1 kB)
+Collecting pycparser (from cffi>=1.12->cryptography==42.0.2->esphome==2024.4.2)
+  Downloading pycparser-3.0-py3-none-any.whl.metadata (8.2 kB)
+INFO: pip is looking at multiple versions of chacha20poly1305-reuseable to determine which version is compatible with other requirements. This could take a while.
+Collecting chacha20poly1305-reuseable>=0.12.1 (from aioesphomeapi==23.2.0->esphome==2024.4.2)
+  Downloading chacha20poly1305_reuseable-0.13.1-py3-none-any.whl.metadata (5.3 kB)
+  Downloading chacha20poly1305_reuseable-0.13.0-py3-none-any.whl.metadata (5.3 kB)
+  Downloading chacha20poly1305_reuseable-0.12.2.tar.gz (11 kB)
+  Installing build dependencies: started
+  Installing build dependencies: finished with status 'done'
+  Getting requirements to build wheel: started
+  Getting requirements to build wheel: finished with status 'done'
+  Preparing metadata (pyproject.toml): started
+  Preparing metadata (pyproject.toml): finished with status 'done'
+Collecting six>=1.9.0 (from ecdsa>=0.16.0->esptool==4.7.0->esphome==2024.4.2)
+  Downloading six-1.17.0-py2.py3-none-any.whl.metadata (1.7 kB)
+Downloading esphome-2024.4.2-py2.py3-none-any.whl (3.5 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.5/3.5 MB 39.1 MB/s  0:00:00
+Downloading aioesphomeapi-23.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (2.3 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 2.3/2.3 MB 42.3 MB/s  0:00:00
+Downloading zeroconf-0.131.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (14.4 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 14.4/14.4 MB 186.6 MB/s  0:00:00
+Downloading click-8.1.7-py3-none-any.whl (97 kB)
+Downloading colorama-0.4.6-py2.py3-none-any.whl (25 kB)
+Downloading cryptography-42.0.2-cp39-abi3-manylinux_2_28_x86_64.whl (4.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 4.7/4.7 MB 349.4 MB/s  0:00:00
+Downloading esphome_dashboard-20240412.0-py3-none-any.whl (5.7 MB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 5.7/5.7 MB 107.3 MB/s  0:00:00
+Downloading icmplib-3.0.4-py3-none-any.whl (30 kB)
+Downloading kconfiglib-13.7.1-py2.py3-none-any.whl (145 kB)
+Downloading pyserial-3.5-py2.py3-none-any.whl (90 kB)
+Downloading pyelftools-0.30-py2.py3-none-any.whl (177 kB)
+Downloading python_magic-0.4.27-py2.py3-none-any.whl (13 kB)
+Downloading PyYAML-6.0.1-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (757 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 757.7/757.7 kB 173.9 MB/s  0:00:00
+Downloading ruamel.yaml-0.18.6-py3-none-any.whl (117 kB)
+Downloading tornado-6.4-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl (435 kB)
+Downloading tzlocal-5.2-py3-none-any.whl (17 kB)
+Downloading voluptuous-0.14.2-py3-none-any.whl (31 kB)
+Downloading ajsonrpc-1.2.0-py3-none-any.whl (22 kB)
+Downloading bottle-0.12.25-py3-none-any.whl (90 kB)
+Downloading marshmallow-3.26.2-py3-none-any.whl (50 kB)
+Downloading noiseprotocol-0.3.1-py3-none-any.whl (20 kB)
+Downloading reedsolo-1.7.0-py3-none-any.whl (32 kB)
+Downloading requests-2.34.2-py3-none-any.whl (73 kB)
+Downloading charset_normalizer-3.4.9-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (221 kB)
+Downloading idna-3.18-py3-none-any.whl (65 kB)
+Downloading semantic_version-2.10.0-py2.py3-none-any.whl (15 kB)
+Downloading starlette-0.35.1-py3-none-any.whl (71 kB)
+Downloading anyio-4.14.2-py3-none-any.whl (125 kB)
+Downloading tabulate-0.10.0-py3-none-any.whl (39 kB)
+Downloading urllib3-2.7.0-py3-none-any.whl (131 kB)
+Downloading uvicorn-0.25.0-py3-none-any.whl (60 kB)
+Downloading wsproto-1.3.2-py3-none-any.whl (24 kB)
+Downloading h11-0.16.0-py3-none-any.whl (37 kB)
+Downloading aiohappyeyeballs-2.7.1-py3-none-any.whl (15 kB)
+Downloading argcomplete-3.7.0-py3-none-any.whl (42 kB)
+Downloading async_interrupt-1.2.2-py3-none-any.whl (8.9 kB)
+Downloading bitstring-4.4.0-py3-none-any.whl (76 kB)
+Downloading bitarray-3.10.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (369 kB)
+Downloading tibs-0.5.7-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl (423 kB)
+Downloading certifi-2026.7.22-py3-none-any.whl (136 kB)
+Downloading cffi-2.1.0-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl (217 kB)
+Downloading ecdsa-0.19.2-py2.py3-none-any.whl (150 kB)
+Downloading ifaddr-0.2.0-py3-none-any.whl (12 kB)
+Using cached packaging-26.2-py3-none-any.whl (100 kB)
+Downloading protobuf-7.35.1-cp310-abi3-manylinux2014_x86_64.whl (327 kB)
+Downloading pyparsing-3.3.2-py3-none-any.whl (122 kB)
+Downloading ruamel_yaml_clib-0.2.15-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.manylinux_2_28_x86_64.whl (777 kB)
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 777.6/777.6 kB 173.5 MB/s  0:00:00
+Downloading six-1.17.0-py2.py3-none-any.whl (11 kB)
+Downloading typing_extensions-4.16.0-py3-none-any.whl (45 kB)
+Downloading tzdata-2026.3-py2.py3-none-any.whl (348 kB)
+Downloading intelhex-2.3.0-py2.py3-none-any.whl (50 kB)
+Downloading pycparser-3.0-py3-none-any.whl (48 kB)
+Building wheels for collected packages: esptool, paho-mqtt, platformio, chacha20poly1305-reuseable
+  Building wheel for esptool (pyproject.toml): started
+  Building wheel for esptool (pyproject.toml): finished with status 'done'
+  Created wheel for esptool: filename=esptool-4.7.0-py3-none-any.whl size=370278 sha256=ef31f8ae25c0f7eec70ee4b28d9e877074cd28c057789c17b2959107c466dad1
+  Stored in directory: /home/runner/.cache/pip/wheels/4c/fa/f6/3973cbe4122577a221ae11f1d46acc69b92abb0dca99f672c0
+  Building wheel for paho-mqtt (pyproject.toml): started
+  Building wheel for paho-mqtt (pyproject.toml): finished with status 'done'
+  Created wheel for paho-mqtt: filename=paho_mqtt-1.6.1-py3-none-any.whl size=62198 sha256=d09a6802a5c9c6f9fac1cfbb882d2c6efbf71e9c315c8c84b6264bab037adb13
+  Stored in directory: /home/runner/.cache/pip/wheels/29/ea/a5/ba9a63aaf4cd4e16e8a87ee31fb4d11b04ff5e1735d312619a
+  Building wheel for platformio (pyproject.toml): started
+  Building wheel for platformio (pyproject.toml): finished with status 'done'
+  Created wheel for platformio: filename=platformio-6.1.13-py3-none-any.whl size=418324 sha256=482d817ce9d8560a48c7880770a5214a475337e6dcdde620825459f9b5628b73
+  Stored in directory: /home/runner/.cache/pip/wheels/28/4e/7e/bbe377e6b8583319964b5456c45a113854e4ce1a61c791b973
+  Building wheel for chacha20poly1305-reuseable (pyproject.toml): started
+  Building wheel for chacha20poly1305-reuseable (pyproject.toml): finished with status 'done'
+  Created wheel for chacha20poly1305-reuseable: filename=chacha20poly1305_reuseable-0.12.2-cp311-cp311-manylinux_2_39_x86_64.whl size=293541 sha256=ded92dfdd0b5d3beda0263bb44562b8c8b547ceb1a68f9dc24f3b214d08ebd52
+  Stored in directory: /home/runner/.cache/pip/wheels/c1/e5/04/30308c0494decf4b735fc95a50a7e831673f018a0e68b71462
+Successfully built esptool paho-mqtt platformio chacha20poly1305-reuseable
+Installing collected packages: reedsolo, pyserial, pyelftools, paho-mqtt, intelhex, ifaddr, esphome-dashboard, bottle, zeroconf, voluptuous, urllib3, tzlocal, tzdata, typing_extensions, tornado, tibs, tabulate, six, semantic_version, ruamel.yaml.clib, PyYAML, python-magic, pyparsing, pycparser, protobuf, packaging, kconfiglib, idna, icmplib, h11, colorama, click, charset_normalizer, certifi, bitarray, async-interrupt, argcomplete, ajsonrpc, aiohappyeyeballs, wsproto, uvicorn, ruamel.yaml, requests, marshmallow, ecdsa, cffi, bitstring, anyio, starlette, cryptography, platformio, noiseprotocol, esptool, chacha20poly1305-reuseable, aioesphomeapi, esphome
+
+Successfully installed PyYAML-6.0.1 aioesphomeapi-23.2.0 aiohappyeyeballs-2.7.1 ajsonrpc-1.2.0 anyio-4.14.2 argcomplete-3.7.0 async-interrupt-1.2.2 bitarray-3.10.0 bitstring-4.4.0 bottle-0.12.25 certifi-2026.7.22 cffi-2.1.0 chacha20poly1305-reuseable-0.12.2 charset_normalizer-3.4.9 click-8.1.7 colorama-0.4.6 cryptography-42.0.2 ecdsa-0.19.2 esphome-2024.4.2 esphome-dashboard-20240412.0 esptool-4.7.0 h11-0.16.0 icmplib-3.0.4 idna-3.18 ifaddr-0.2.0 intelhex-2.3.0 kconfiglib-13.7.1 marshmallow-3.26.2 noiseprotocol-0.3.1 packaging-26.2 paho-mqtt-1.6.1 platformio-6.1.13 protobuf-7.35.1 pycparser-3.0 pyelftools-0.30 pyparsing-3.3.2 pyserial-3.5 python-magic-0.4.27 reedsolo-1.7.0 requests-2.34.2 ruamel.yaml-0.18.6 ruamel.yaml.clib-0.2.15 semantic_version-2.10.0 six-1.17.0 starlette-0.35.1 tabulate-0.10.0 tibs-0.5.7 tornado-6.4 typing_extensions-4.16.0 tzdata-2026.3 tzlocal-5.2 urllib3-2.7.0 uvicorn-0.25.0 voluptuous-0.14.2 wsproto-1.3.2 zeroconf-0.131.0
+Version: 2024.4.2
+===== BUILD firmware-debug/klima-eg-kueche-debug.yaml =====
+INFO ESPHome 2024.4.2
+INFO Reading configuration firmware-debug/klima-eg-kueche-debug.yaml...
+ERROR Error while reading config: The local log level VERY_VERBOSE for midea must be less severe than the global log level DEBUG.
